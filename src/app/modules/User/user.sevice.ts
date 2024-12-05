@@ -1,13 +1,13 @@
-import { Admin, Doctor, Patient, Prisma, User, UserRole, UserStatus } from "@prisma/client";
-import * as bcrypt from 'bcrypt'
-import prisma from "../../../shared/prisma";
-import { fileUploader } from "../../../helpars/fileUploader";
-import { IFile } from "../../interfaces/file";
+import { Admin, Doctor, Patient, Prisma, Role, UserStatus } from "@prisma/client";
+import * as bcrypt from 'bcrypt';
 import { Request } from "express";
-import { IPaginationOptions } from "../../interfaces/pagination";
+import { fileUploader } from "../../../helpars/fileUploader";
 import { paginationHelper } from "../../../helpars/paginationHelper";
-import { userSearchAbleFields } from "./user.constant";
+import prisma from "../../../shared/prisma";
 import { IAuthUser } from "../../interfaces/common";
+import { IFile } from "../../interfaces/file";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { userSearchAbleFields } from "./user.constant";
 
 const createAdmin = async (req: Request): Promise<Admin> => {
 
@@ -23,7 +23,7 @@ const createAdmin = async (req: Request): Promise<Admin> => {
     const userData = {
         email: req.body.admin.email,
         password: hashedPassword,
-        role: UserRole.ADMIN
+        role: Role.ADMIN
     }
 
     const result = await prisma.$transaction(async (transactionClient) => {
@@ -55,7 +55,7 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
     const userData = {
         email: req.body.doctor.email,
         password: hashedPassword,
-        role: UserRole.DOCTOR
+        role: Role.DOCTOR
     }
 
     const result = await prisma.$transaction(async (transactionClient) => {
@@ -86,7 +86,7 @@ const createPatient = async (req: Request): Promise<Patient> => {
     const userData = {
         email: req.body.patient.email,
         password: hashedPassword,
-        role: UserRole.PATIENT
+        role: Role.PATIENT
     }
 
     const result = await prisma.$transaction(async (transactionClient) => {
@@ -171,7 +171,7 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
     };
 };
 
-const changeProfileStatus = async (id: string, status: UserRole) => {
+const changeProfileStatus = async (id: string, status: Role) => {
     const userData = await prisma.user.findUniqueOrThrow({
         where: {
             id
@@ -206,28 +206,28 @@ const getMyProfile = async (user: IAuthUser) => {
 
     let profileInfo;
 
-    if (userInfo.role === UserRole.SUPER_ADMIN) {
+    if (userInfo.role === Role.SUPER_ADMIN) {
         profileInfo = await prisma.admin.findUnique({
             where: {
                 email: userInfo.email
             }
         })
     }
-    else if (userInfo.role === UserRole.ADMIN) {
+    else if (userInfo.role === Role.ADMIN) {
         profileInfo = await prisma.admin.findUnique({
             where: {
                 email: userInfo.email
             }
         })
     }
-    else if (userInfo.role === UserRole.DOCTOR) {
+    else if (userInfo.role === Role.DOCTOR) {
         profileInfo = await prisma.doctor.findUnique({
             where: {
                 email: userInfo.email
             }
         })
     }
-    else if (userInfo.role === UserRole.PATIENT) {
+    else if (userInfo.role === Role.PATIENT) {
         profileInfo = await prisma.patient.findUnique({
             where: {
                 email: userInfo.email
@@ -255,7 +255,7 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
 
     let profileInfo;
 
-    if (userInfo.role === UserRole.SUPER_ADMIN) {
+    if (userInfo.role === Role.SUPER_ADMIN) {
         profileInfo = await prisma.admin.update({
             where: {
                 email: userInfo.email
@@ -263,7 +263,7 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
             data: req.body
         })
     }
-    else if (userInfo.role === UserRole.ADMIN) {
+    else if (userInfo.role === Role.ADMIN) {
         profileInfo = await prisma.admin.update({
             where: {
                 email: userInfo.email
@@ -271,7 +271,7 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
             data: req.body
         })
     }
-    else if (userInfo.role === UserRole.DOCTOR) {
+    else if (userInfo.role === Role.DOCTOR) {
         profileInfo = await prisma.doctor.update({
             where: {
                 email: userInfo.email
@@ -279,7 +279,7 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
             data: req.body
         })
     }
-    else if (userInfo.role === UserRole.PATIENT) {
+    else if (userInfo.role === Role.PATIENT) {
         profileInfo = await prisma.patient.update({
             where: {
                 email: userInfo.email

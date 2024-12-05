@@ -1,28 +1,28 @@
+import { Role } from '@prisma/client';
 import express, { NextFunction, Request, Response } from 'express';
-import { userController } from './user.controller';
-import auth from '../../middlewares/auth';
-import { UserRole } from '@prisma/client';
 import { fileUploader } from '../../../helpars/fileUploader';
-import { userValidation } from './user.validation';
+import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
+import { userController } from './user.controller';
+import { userValidation } from './user.validation';
 
 const router = express.Router();
 
 router.get(
     '/',
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    auth(Role.ADMIN),
     userController.getAllFromDB
 );
 
 router.get(
     '/me',
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT),
     userController.getMyProfile
 )
 
 router.post(
     "/create-admin",
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    auth(Role.ADMIN),
     fileUploader.upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = userValidation.createAdmin.parse(JSON.parse(req.body.data))
@@ -32,7 +32,7 @@ router.post(
 
 router.post(
     "/create-doctor",
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    auth(Role.ADMIN),
     fileUploader.upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = userValidation.createDoctor.parse(JSON.parse(req.body.data))
@@ -51,14 +51,14 @@ router.post(
 
 router.patch(
     '/:id/status',
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    auth(Role.ADMIN),
     validateRequest(userValidation.updateStatus),
     userController.changeProfileStatus
 );
 
 router.patch(
     "/update-my-profile",
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT),
     fileUploader.upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = JSON.parse(req.body.data)

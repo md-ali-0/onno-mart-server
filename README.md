@@ -1,11 +1,11 @@
-# PH HealthCare Server
+# Onno Mart Server
 
-Welcome to the backend repository for PH HealthCare, a tutorial project developed as part of the "Level 2 Web Development Course" offered by Programming Hero.
+Welcome to the backend repository for Onno Mart, a tutorial project developed as part of the "Level 2 Web Development Course" offered by Programming Hero.
 
 This repository contains the backend codebase responsible for handling server-side logic, database management, and communication between different system components.
 
 <!-- ## Table of Contents
-- [PH HealthCare Backend](#ph-healthcare-backend)
+- [Onno Mart Backend](#ph-healthcare-backend)
   - [Table of Contents](#table-of-contents)
   - [Technologies Used](#technologies-used)
   - [Features](#features)
@@ -40,8 +40,5 @@ This repository contains the backend codebase responsible for handling server-si
 4. Run the database migrations: `npx prisma migrate dev`
 4. Run the Command: `npm run seed`
 5. Start the server: `npm run dev`
-
-
-### API Documentation: [POSTMAN API DOCUMENTATION (Click Here)](https://documenter.getpostman.com/view/26694209/2sA2xjyWRv)
 
 

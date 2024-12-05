@@ -14,47 +14,111 @@ datasource db {
 }
 
 model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique
-  password           String
-  role               UserRole
-  needPasswordChange Boolean    @default(true)
-  status             UserStatus @default(ACTIVE)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  admin              Admin?
-
-  @@map("users")
-}
-
-model Admin {
-  id            String   @id @default(uuid())
-  name          String
+  id            String   @id @default(cuid())
   email         String   @unique
-  profilePhoto  String?
-  contactNumber String
-  isDeleted     Boolean  @default(false)
+  password      String
+  name          String
+  role          Role     @default(USER)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  user User @relation(fields: [email], references: [email])
-
-  @@map("admins")
+  orders        Order[]
+  reviews       Review[]
+  followedShops Shop[]   @relation("FollowedShops")
+  Vendor        Vendor[]
 }
 
-enum UserRole {
+model Vendor {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  shop   Shop?
+}
+
+model Shop {
+  id          String    @id @default(cuid())
+  name        String
+  logoUrl     String?
+  description String?
+  vendorId    String    @unique
+  vendor      Vendor    @relation(fields: [vendorId], references: [id])
+  products    Product[]
+  orders      Order[]
+  followers   User[]    @relation("FollowedShops")
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  price       Float
+  thumbnail   String
+  description String
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  inventory   Int
+  discount    Float       @default(0.0)
+  images      Image[]
+  shopId      String
+  shop        Shop        @relation(fields: [shopId], references: [id])
+  reviews     Review[]
+  createdAt   DateTime    @default(now())
+  OrderItem   OrderItem[]
+}
+
+model Image {
+  id        String  @id @default(cuid())
+  url       String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  shopId      String
+  shop        Shop        @relation(fields: [shopId], references: [id])
+  products    OrderItem[]
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+enum Role {
   ADMIN
-  DOCTOR
-  PATIENT
+  VENDOR
+  USER
 }
 
-enum UserStatus {
-  ACTIVE
-  BLOCKED
-  DELETED
-}
-
-enum PaymentStatus {
-  PAID
-  UNPAID
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  COMPLETED
+  CANCELED
 }
