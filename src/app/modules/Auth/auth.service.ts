@@ -77,6 +77,38 @@ const signupUser = async (payload: {
     return newUser;
 };
 
+const vendorSignup = async (files: any, payload: any) => {
+    const { name, email, password, shopName, shopDescription } = payload;
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    const logoUrl = files?.shopLogo?.[0]?.path || "";
+
+    const result = await prisma.$transaction(async (tx) => {
+
+        const newUser = await tx.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role: Role.VENDOR,
+            },
+        });
+
+        const newShop = await tx.shop.create({
+            data: {
+                name: shopName,
+                description: shopDescription || "",
+                logoUrl,
+                vendorId: newUser.id,
+            },
+        });
+
+        return { newUser, newShop };
+    });
+
+    return result;
+};
 // Refresh Token Service
 const refreshToken = async (token: string) => {
     let decodedToken;
@@ -200,6 +232,7 @@ const resetPassword = async (token: string, payload: { password: string }) => {
 export const AuthServices = {
     loginUser,
     signupUser,
+    vendorSignup,
     refreshToken,
     changePassword,
     forgotPassword,

@@ -33,6 +33,18 @@ const signupUser = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const vendorSignup = catchAsync(async (req: Request, res: Response) => {
+
+    const result = await AuthServices.vendorSignup(req.files, req.body);
+
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Sign Up successfully!",
+        data: result
+    })
+});
+
 
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
     const { refreshToken } = req.cookies;
@@ -94,6 +106,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 export const AuthController = {
     loginUser,
     signupUser,
+    vendorSignup,
     refreshToken,
     changePassword,
     forgotPassword,
