@@ -1,33 +1,8 @@
-/*
-  Warnings:
-
-  - You are about to drop the `admins` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `users` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'VENDOR', 'USER');
 
 -- CreateEnum
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'SHIPPED', 'COMPLETED', 'CANCELED');
-
--- DropForeignKey
-ALTER TABLE "admins" DROP CONSTRAINT "admins_email_fkey";
-
--- DropTable
-DROP TABLE "admins";
-
--- DropTable
-DROP TABLE "users";
-
--- DropEnum
-DROP TYPE "PaymentStatus";
-
--- DropEnum
-DROP TYPE "UserRole";
-
--- DropEnum
-DROP TYPE "UserStatus";
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -69,10 +44,12 @@ CREATE TABLE "Product" (
     "thumbnail" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "categoryId" TEXT NOT NULL,
+    "brandId" TEXT NOT NULL,
     "inventory" INTEGER NOT NULL,
     "discount" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     "shopId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -84,6 +61,15 @@ CREATE TABLE "Image" (
     "productId" TEXT NOT NULL,
 
     CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Brand" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
+
+    CONSTRAINT "Brand_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -145,6 +131,9 @@ CREATE UNIQUE INDEX "Vendor_userId_key" ON "Vendor"("userId");
 CREATE UNIQUE INDEX "Shop_vendorId_key" ON "Shop"("vendorId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Brand_name_key" ON "Brand"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 
 -- CreateIndex
@@ -161,6 +150,9 @@ ALTER TABLE "Shop" ADD CONSTRAINT "Shop_vendorId_fkey" FOREIGN KEY ("vendorId") 
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Product" ADD CONSTRAINT "Product_brandId_fkey" FOREIGN KEY ("brandId") REFERENCES "Brand"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_shopId_fkey" FOREIGN KEY ("shopId") REFERENCES "Shop"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

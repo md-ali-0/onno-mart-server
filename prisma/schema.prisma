@@ -28,10 +28,12 @@ model User {
 }
 
 model Vendor {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-  shop   Shop?  
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  shop      Shop?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Shop {
@@ -44,6 +46,8 @@ model Shop {
   products    Product[]
   orders      Order[]
   followers   User[]    @relation("FollowedShops")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Product {
@@ -53,28 +57,44 @@ model Product {
   thumbnail   String
   description String
   categoryId  String
+  brandId     String
   category    Category    @relation(fields: [categoryId], references: [id])
+  brand       Brand       @relation(fields: [brandId], references: [id])
   inventory   Int
   discount    Float       @default(0.0)
   images      Image[]
   shopId      String
   shop        Shop        @relation(fields: [shopId], references: [id])
   reviews     Review[]
-  createdAt   DateTime    @default(now())
   OrderItem   OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Image {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   url       String
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  image     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  products Product[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Order {
@@ -87,16 +107,19 @@ model Order {
   totalAmount Float
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Review {
@@ -107,7 +130,8 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id])
   rating    Int
   comment   String?
-  createdAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 enum Role {
