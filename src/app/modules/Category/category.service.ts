@@ -1,17 +1,12 @@
-import { Brand, Prisma } from "@prisma/client";
+import { Category, Prisma } from "@prisma/client";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
-const create = async (files: any, payload: any) => {
+const create = async (payload: any) => {
 
-    const image = files?.image?.[0]?.path || "";
-    
-    const result = await prisma.brand.create({
-        data: {
-            name: payload.name,
-            image
-        },
+    const result = await prisma.category.create({
+        data: payload,
     });
 
     return result;
@@ -21,7 +16,7 @@ const getAll = async (params: Record<string, unknown>, options: IPaginationOptio
     const { page, limit, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, ...filterData } = params;
 
-    const andCondions: Prisma.BrandWhereInput[] = [];
+    const andCondions: Prisma.CategoryWhereInput[] = [];
 
     //console.log(filterData);
     if (params.searchTerm) {
@@ -46,9 +41,9 @@ const getAll = async (params: Record<string, unknown>, options: IPaginationOptio
     };
 
     //console.dir(andCondions, { depth: 'inifinity' })
-    const whereConditons: Prisma.BrandWhereInput = { AND: andCondions }
+    const whereConditons: Prisma.CategoryWhereInput = { AND: andCondions }
 
-    const result = await prisma.brand.findMany({
+    const result = await prisma.category.findMany({
         where: whereConditons,
         skip,
         take: limit,
@@ -59,7 +54,7 @@ const getAll = async (params: Record<string, unknown>, options: IPaginationOptio
         }
     });
 
-    const total = await prisma.brand.count({
+    const total = await prisma.category.count({
         where: whereConditons
     });
 
@@ -77,8 +72,8 @@ const getAll = async (params: Record<string, unknown>, options: IPaginationOptio
 };
 
 
-const getOne = async (id: string): Promise<Brand | null> => {
-    const result = await prisma.brand.findUnique({
+const getOne = async (id: string): Promise<Category | null> => {
+    const result = await prisma.category.findUnique({
         where: {
             id
         }
@@ -87,18 +82,14 @@ const getOne = async (id: string): Promise<Brand | null> => {
     return result;
 };
 
-const update = async (id: string, files: any, data: Partial<Brand>): Promise<Brand> => {
-    await prisma.brand.findUniqueOrThrow({
+const update = async (id: string, data: Partial<Category>): Promise<Category> => {
+    await prisma.category.findUniqueOrThrow({
         where: {
             id
         }
     });
 
-    const image = files?.image?.[0]?.path || "";
-    if (image) {
-        data.image = image
-    }
-    const result = await prisma.brand.update({
+    const result = await prisma.category.update({
         where: {
             id
         },
@@ -109,15 +100,15 @@ const update = async (id: string, files: any, data: Partial<Brand>): Promise<Bra
 };
 
 
-const remove = async (id: string): Promise<Brand | null> => {
+const remove = async (id: string): Promise<Category | null> => {
 
-    await prisma.brand.findUniqueOrThrow({
+    await prisma.category.findUniqueOrThrow({
         where: {
             id
         }
     });
 
-    const result = await prisma.brand.delete({
+    const result = await prisma.category.delete({
         where: {
             id
         }
@@ -126,7 +117,7 @@ const remove = async (id: string): Promise<Brand | null> => {
     return result;
 }
 
-export const BrandService= {
+export const CategoryService= {
     create,
     getAll,
     getOne,
