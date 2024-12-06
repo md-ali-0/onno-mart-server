@@ -64,8 +64,8 @@ model Product {
   inventory   Int
   discount    Float       @default(0.0)
   images      Image[]
-  shopId      String
-  shop        Shop        @relation(fields: [shopId], references: [id])
+  shopId      String?
+  shop        Shop?        @relation(fields: [shopId], references: [id])
   reviews     Review[]
   OrderItem   OrderItem[]
   createdAt   DateTime    @default(now())
