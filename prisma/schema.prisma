@@ -54,7 +54,7 @@ model Shop {
 model Product {
   id          String      @id @default(cuid())
   name        String
-  price       Float
+  price       Int
   thumbnail   String
   description String
   categoryId  String
@@ -62,10 +62,10 @@ model Product {
   category    Category    @relation(fields: [categoryId], references: [id])
   brand       Brand       @relation(fields: [brandId], references: [id])
   inventory   Int
-  discount    Float       @default(0.0)
+  discount    Int         @default(0)
   images      Image[]
   shopId      String?
-  shop        Shop?        @relation(fields: [shopId], references: [id])
+  shop        Shop?       @relation(fields: [shopId], references: [id])
   reviews     Review[]
   OrderItem   OrderItem[]
   createdAt   DateTime    @default(now())

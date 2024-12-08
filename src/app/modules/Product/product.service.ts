@@ -77,6 +77,11 @@ const getAll = async (
                 : {
                       createdAt: "desc",
                   },
+        include: {
+            brand: true,
+            category: true,
+            shop: true,
+        },
     });
 
     const total = await prisma.product.count({
@@ -201,7 +206,6 @@ const remove = async (id: string): Promise<Product | null> => {
 
     return result;
 };
-
 
 export const ProductService = {
     create,

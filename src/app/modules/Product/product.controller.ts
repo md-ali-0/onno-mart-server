@@ -11,7 +11,7 @@ const create = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Product data fetched by id!",
+        message: "Product data created",
         data: result,
     });
 });
@@ -50,7 +50,7 @@ const getOne = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Product data Created",
+        message: "Product data fetched by id",
         data: result,
     });
 });

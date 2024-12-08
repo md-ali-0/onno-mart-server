@@ -20,7 +20,7 @@
         "@types/node": "^20.11.26",
         "@types/nodemailer": "^6.4.14",
         "@types/uuid": "^9.0.8",
-        "prisma": "^5.11.0",
+        "prisma": "^6.0.1",
         "tsx": "^4.19.2",
         "typescript": "^5.4.2"
     },
