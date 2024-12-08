@@ -16,7 +16,7 @@ router.get(
 
 router.get(
     '/me',
-    auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT),
+    auth(Role.ADMIN, Role.VENDOR, Role.USER),
     userController.getMyProfile
 )
 

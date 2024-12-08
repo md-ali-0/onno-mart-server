@@ -18,13 +18,14 @@ model User {
   email         String   @unique
   password      String
   name          String
+  avatar        String @default("https://res.cloudinary.com/dy8ef1ngb/image/upload/v1733646752/avatar_szqowp.png")
   role          Role     @default(USER)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   orders        Order[]
   reviews       Review[]
   followedShops Shop[]   @relation("FollowedShops")
-  Vendor        Vendor[]
+  Vendor        Vendor?
 }
 
 model Vendor {

@@ -192,15 +192,18 @@ const getMyProfile = async (user: IAuthUser) => {
 
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
-            email: user?.email,
-            status: UserStatus.ACTIVE
+            id: user?.user,
         },
         select: {
             id: true,
+            name: true,
+            avatar: true,
             email: true,
-            needPasswordChange: true,
+            orders: true,
+            reviews: true,
+            followedShops: true,
+            Vendor: true,
             role: true,
-            status: true
         }
     });
 

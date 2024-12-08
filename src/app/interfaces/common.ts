@@ -1,6 +1,6 @@
 import { Role } from "@prisma/client";
 
 export type IAuthUser = {
-    email: string;
+    user: string;
     role: Role
 } | null;
