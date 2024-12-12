@@ -4,17 +4,7 @@ import sendResponse from "../../../shared/sendResponse";
 
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../../shared/catchAsync";
-import { ProductService } from "./product.service";
-
-const create = catchAsync(async (req: Request, res: Response) => {
-    const result = await ProductService.create(req.files, req.body);
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Product data created",
-        data: result,
-    });
-});
+import { ShopService } from "./shop.service";
 
 const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
@@ -31,7 +21,7 @@ const getAll: RequestHandler = catchAsync(
             "sortBy",
             "sortOrder",
         ]);
-        const result = await ProductService.getAll(filters, options);
+        const result = await ShopService.getAll(filters, options);
 
         sendResponse(res, {
             statusCode: StatusCodes.OK,
@@ -44,9 +34,9 @@ const getAll: RequestHandler = catchAsync(
 );
 
 const getOne = catchAsync(async (req: Request, res: Response) => {
-    const { slug } = req.params;
+    const { id } = req.params;
 
-    const result = await ProductService.getOne(slug);
+    const result = await ShopService.getOne(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -58,7 +48,7 @@ const getOne = catchAsync(async (req: Request, res: Response) => {
 const update = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await ProductService.update(id, req.files, req.body);
+    const result = await ShopService.update(id, req.files, req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -70,7 +60,7 @@ const update = catchAsync(async (req: Request, res: Response) => {
 const remove = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await ProductService.remove(id);
+    const result = await ShopService.remove(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -79,8 +69,7 @@ const remove = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const ProductController = {
-    create,
+export const ShopController = {
     getAll,
     getOne,
     update,

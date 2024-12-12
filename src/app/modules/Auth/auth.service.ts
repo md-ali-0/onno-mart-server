@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Role, ShopStatus } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { StatusCodes } from "http-status-codes";
 import { Secret } from "jsonwebtoken";
@@ -79,9 +79,9 @@ const signupUser = async (payload: {
 
 const vendorSignup = async (files: any, payload: any) => {
     const { name, email, password, shopName, shopDescription } = payload;
-
+    
     const hashedPassword = bcrypt.hashSync(password, 10);
-
+    
     const logoUrl = files?.shopLogo?.[0]?.path || "";
 
     const result = await prisma.$transaction(async (tx) => {
@@ -94,17 +94,23 @@ const vendorSignup = async (files: any, payload: any) => {
                 role: Role.VENDOR,
             },
         });
-
+        const newVendor = await tx.vendor.create({
+            data: {
+                userId: newUser.id,
+            },
+        });
+        
         const newShop = await tx.shop.create({
             data: {
                 name: shopName,
-                description: shopDescription || "",
+                description: shopDescription,
                 logoUrl,
-                vendorId: newUser.id,
+                vendorId: newVendor.id,
+                status: ShopStatus.ACTIVE
             },
         });
 
-        return { newUser, newShop };
+        return { newUser, newVendor, newShop };
     });
 
     return result;

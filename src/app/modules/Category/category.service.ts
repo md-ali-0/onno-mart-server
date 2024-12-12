@@ -4,7 +4,6 @@ import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
 const create = async (payload: any) => {
-
     const result = await prisma.category.create({
         data: payload,
     });
@@ -12,7 +11,10 @@ const create = async (payload: any) => {
     return result;
 };
 
-const getAll = async (params: Record<string, unknown>, options: IPaginationOptions) => {
+const getAll = async (
+    params: Record<string, unknown>,
+    options: IPaginationOptions
+) => {
     const { page, limit, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, ...filterData } = params;
 
@@ -21,106 +23,109 @@ const getAll = async (params: Record<string, unknown>, options: IPaginationOptio
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
-            OR: ['name'].map(field => ({
+            OR: ["name", "slug"].map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
-                    mode: 'insensitive'
-                }
-            }))
-        })
-    };
+                    mode: "insensitive",
+                },
+            })),
+        });
+    }
 
     if (Object.keys(filterData).length > 0) {
         andCondions.push({
-            AND: Object.keys(filterData).map(key => ({
+            AND: Object.keys(filterData).map((key) => ({
                 [key]: {
-                    equals: (filterData as any)[key]
-                }
-            }))
-        })
-    };
+                    equals: (filterData as any)[key],
+                },
+            })),
+        });
+    }
 
     //console.dir(andCondions, { depth: 'inifinity' })
-    const whereConditons: Prisma.CategoryWhereInput = { AND: andCondions }
+    const whereConditons: Prisma.CategoryWhereInput = { AND: andCondions };
 
     const result = await prisma.category.findMany({
         where: whereConditons,
         skip,
         take: limit,
-        orderBy: options.sortBy && options.sortOrder ? {
-            [options?.sortBy]: options.sortOrder
-        } : {
-            createdAt: 'desc'
-        }
+        orderBy:
+            options.sortBy && options.sortOrder
+                ? {
+                      [options?.sortBy]: options.sortOrder,
+                  }
+                : {
+                      createdAt: "desc",
+                  },
     });
-
+    
     const total = await prisma.category.count({
-        where: whereConditons
+        where: whereConditons,
     });
 
-    const totalPage = Math.ceil(total / limit)
+    const totalPage = Math.ceil(total / limit);
 
     return {
         meta: {
             page,
             limit,
             total,
-            totalPage
+            totalPage,
         },
-        data: result
+        data: result,
     };
 };
-
 
 const getOne = async (id: string): Promise<Category | null> => {
     const result = await prisma.category.findUnique({
         where: {
-            id
-        }
-    })
+            id,
+        },
+    });
 
     return result;
 };
 
-const update = async (id: string, data: Partial<Category>): Promise<Category> => {
+const update = async (
+    id: string,
+    data: Partial<Category>
+): Promise<Category> => {
     await prisma.category.findUniqueOrThrow({
         where: {
-            id
-        }
+            id,
+        },
     });
 
     const result = await prisma.category.update({
         where: {
-            id
+            id,
         },
-        data
+        data,
     });
 
     return result;
 };
 
-
 const remove = async (id: string): Promise<Category | null> => {
-
     await prisma.category.findUniqueOrThrow({
         where: {
-            id
-        }
+            id,
+        },
     });
 
     const result = await prisma.category.delete({
         where: {
-            id
-        }
+            id,
+        },
     });
 
     return result;
-}
+};
 
-export const CategoryService= {
+export const CategoryService = {
     create,
     getAll,
     getOne,
     update,
-    remove
-}
+    remove,
+};

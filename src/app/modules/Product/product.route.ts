@@ -5,7 +5,7 @@ import { ProductController } from "./product.controller";
 const router = Router();
 
 router.get("/", ProductController.getAll);
-router.get("/:id", ProductController.getOne);
+router.get("/:slug", ProductController.getOne);
 router.post(
     "/",
     upload.fields([

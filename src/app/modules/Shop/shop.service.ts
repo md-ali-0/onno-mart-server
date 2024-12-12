@@ -1,35 +1,8 @@
-import { Prisma, Product } from "@prisma/client";
+import { Prisma, Product, Shop } from "@prisma/client";
 import fs from "fs";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
-
-const create = async (files: any, payload: Product) => {
-    const thumbnailFile = files?.thumbnail?.[0]?.path || "";
-    const imageFiles = files?.images
-        ? files?.images.map((file: { path: any }) => file.path)
-        : [];
-
-    if (thumbnailFile) {
-        payload.thumbnail = thumbnailFile;
-    }
-
-    const result = await prisma.$transaction(async (tx) => {
-        const createProduct = await tx.product.create({
-            data: payload,
-        });
-        if (imageFiles.length > 0) {
-            await tx.image.createMany({
-                data: imageFiles.map((image: string) => ({
-                    url: image,
-                    productId: createProduct.id,
-                })),
-            });
-        }
-    });
-
-    return result;
-};
 
 const getAll = async (
     params: Record<string, unknown>,
@@ -38,7 +11,7 @@ const getAll = async (
     const { page, limit, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, ...filterData } = params;
 
-    const andCondions: Prisma.ProductWhereInput[] = [];
+    const andCondions: Prisma.ShopWhereInput[] = [];
 
     //console.log(filterData);
     if (params.searchTerm) {
@@ -63,9 +36,9 @@ const getAll = async (
     }
 
     //console.dir(andCondions, { depth: 'inifinity' })
-    const whereConditons: Prisma.ProductWhereInput = { AND: andCondions };
+    const whereConditons: Prisma.ShopWhereInput = { AND: andCondions };
 
-    const result = await prisma.product.findMany({
+    const result = await prisma.shop.findMany({
         where: whereConditons,
         skip,
         take: limit,
@@ -78,14 +51,11 @@ const getAll = async (
                       createdAt: "desc",
                   },
         include: {
-            brand: true,
-            category: true,
-            shop: true,
-            images: true
+            vendor: true
         },
     });
 
-    const total = await prisma.product.count({
+    const total = await prisma.shop.count({
         where: whereConditons,
     });
 
@@ -102,27 +72,20 @@ const getAll = async (
     };
 };
 
-const getOne = async (slug: string): Promise<Product | null> => {
-    const result = await prisma.product.findUnique({
+const getOne = async (id: string): Promise<Shop | null> => {
+    const result = await prisma.shop.findUnique({
         where: {
-            slug,
-        },
-        include: {
-            brand: true,
-            category: true,
-            shop: true,
-            images: true
+            id,
         },
     });
 
     return result;
 };
 
-const update = async (id: string, files: any, data: Partial<Product>) => {
+const update = async (id: string, files: any, data: Partial<Shop>) => {
     // Check if the product exists
-    const existingProduct = await prisma.product.findUniqueOrThrow({
+    const existingProduct = await prisma.shop.findUniqueOrThrow({
         where: { id },
-        include: { images: true }, // Include associated images for comparison
     });
 
     const thumbnailFile = files?.thumbnail?.[0]?.path || "";
@@ -132,47 +95,16 @@ const update = async (id: string, files: any, data: Partial<Product>) => {
 
     // If a new thumbnail is uploaded, update it
     if (thumbnailFile) {
-        data.thumbnail = thumbnailFile;
+        data.logoUrl = thumbnailFile;
     }
 
     // Start a transaction
     const result = await prisma.$transaction(async (tx) => {
         // Update the product
-        const updatedProduct = await tx.product.update({
+        const updatedProduct = await tx.shop.update({
             where: { id },
             data,
         });
-
-        // Handle images
-        if (newImageFiles.length > 0) {
-            // Delete old images if they are not in the new images list
-            const oldImages = existingProduct.images;
-            const imagesToDelete = oldImages.filter(
-                (image) => !newImageFiles.includes(image.url)
-            );
-
-            // Delete old images from the database
-            if (imagesToDelete.length > 0) {
-                await tx.image.deleteMany({
-                    where: {
-                        id: {
-                            in: imagesToDelete.map((image) => image.id),
-                        },
-                    },
-                });
-
-                // Optionally, remove images from the file system here
-                // imagesToDelete.forEach(image => fs.unlinkSync(image.url));
-            }
-
-            // Add new images
-            await tx.image.createMany({
-                data: newImageFiles.map((image: any) => ({
-                    url: image,
-                    productId: updatedProduct.id,
-                })),
-            });
-        }
 
         return updatedProduct;
     });
@@ -214,8 +146,7 @@ const remove = async (id: string): Promise<Product | null> => {
     return result;
 };
 
-export const ProductService = {
-    create,
+export const ShopService = {
     getAll,
     getOne,
     update,

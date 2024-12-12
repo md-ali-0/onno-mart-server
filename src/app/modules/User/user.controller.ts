@@ -7,39 +7,6 @@ import { IAuthUser } from "../../interfaces/common";
 import { userFilterableFields } from "./user.constant";
 import { userService } from "./user.sevice";
 
-const createAdmin = catchAsync(async (req: Request, res: Response) => {
-
-    const result = await userService.createAdmin(req);
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Admin Created successfuly!",
-        data: result
-    })
-});
-
-const createDoctor = catchAsync(async (req: Request, res: Response) => {
-
-    const result = await userService.createDoctor(req);
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Doctor Created successfuly!",
-        data: result
-    })
-});
-
-const createPatient = catchAsync(async (req: Request, res: Response) => {
-
-    const result = await userService.createPatient(req);
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Patient Created successfuly!",
-        data: result
-    })
-});
-
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     // console.log(req.query)
     const filters = pick(req.query, userFilterableFields);
@@ -99,9 +66,6 @@ const updateMyProfie = catchAsync(async (req: Request & { user?: IAuthUser }, re
 });
 
 export const userController = {
-    createAdmin,
-    createDoctor,
-    createPatient,
     getAllFromDB,
     changeProfileStatus,
     getMyProfile,

@@ -10,6 +10,7 @@ const create = async (files: any, payload: any) => {
     const result = await prisma.brand.create({
         data: {
             name: payload.name,
+            slug: payload.slug,
             image
         },
     });
