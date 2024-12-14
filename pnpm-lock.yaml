@@ -12,7 +12,7 @@ importers:
         specifier: 5.11.0
         version: 5.11.0(prisma@6.0.1)
       axios:
-        specifier: ^1.6.8
+        specifier: ^1.7.8
         version: 1.7.8
       bcrypt:
         specifier: ^5.1.1
@@ -47,6 +47,9 @@ importers:
       nodemailer:
         specifier: ^6.9.12
         version: 6.9.16
+      sslcommerz-lts:
+        specifier: ^1.1.0
+        version: 1.1.0
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
@@ -542,6 +545,10 @@ packages:
       debug:
         optional: true
 
+  form-data@2.5.0:
+    resolution: {integrity: sha512-WXieX3G/8side6VIqx44ablyULoGruSde5PNTxoUyo5CeyAMX6nVWUd0rgist/EuX655cjhUhTo1Fo3tRYqbcA==}
+    engines: {node: '>= 0.12'}
+
   form-data@4.0.1:
     resolution: {integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==}
     engines: {node: '>= 6'}
@@ -751,6 +758,10 @@ packages:
   node-addon-api@5.1.0:
     resolution: {integrity: sha512-eh0GgfEkpnoWDq+VY8OyvYhFEzBk6jIYbRKdIlyTiAXIVJ8PyBaKb0rp7oDtoddbdoHWhq8wwr+XZ81F1rpNdA==}
 
+  node-fetch@2.6.1:
+    resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
+    engines: {node: 4.x || >=6.0.0}
+
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
     engines: {node: 4.x || >=6.0.0}
@@ -891,6 +902,9 @@ packages:
 
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+
+  sslcommerz-lts@1.1.0:
+    resolution: {integrity: sha512-17NOGDzdCQ/Uub2gAnaZ20Cc3n97d1KuP2Bl1ki2cLm1e0WPBj7cESeD/Y9bQE6/Tlq64iXdkOtgwBA/5FHuJg==}
 
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
@@ -1431,6 +1445,12 @@ snapshots:
 
   follow-redirects@1.15.9: {}
 
+  form-data@2.5.0:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+
   form-data@4.0.1:
     dependencies:
       asynckit: 0.4.0
@@ -1642,6 +1662,8 @@ snapshots:
 
   node-addon-api@5.1.0: {}
 
+  node-fetch@2.6.1: {}
+
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
@@ -1787,6 +1809,11 @@ snapshots:
       object-inspect: 1.13.3
 
   signal-exit@3.0.7: {}
+
+  sslcommerz-lts@1.1.0:
+    dependencies:
+      form-data: 2.5.0
+      node-fetch: 2.6.1
 
   statuses@2.0.1: {}
 

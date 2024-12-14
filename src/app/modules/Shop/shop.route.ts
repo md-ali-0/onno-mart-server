@@ -10,8 +10,7 @@ router.get("/:id", ShopController.getOne);
 router.patch(
     "/:id",
     upload.fields([
-        { name: "images", maxCount: 10 },
-        { name: "thumbnail", maxCount: 1 }
+        { name: "logoUrl", maxCount: 1 }
     ]),
     (req: Request, res: Response, next: NextFunction) => {
         if (req.body.data) {

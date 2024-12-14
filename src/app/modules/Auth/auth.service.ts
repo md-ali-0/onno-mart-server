@@ -1,4 +1,4 @@
-import { Role, ShopStatus } from "@prisma/client";
+import { Role, ShopStatus, UserStatus } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { StatusCodes } from "http-status-codes";
 import { Secret } from "jsonwebtoken";
@@ -39,7 +39,12 @@ const loginUser = async (payload: { email: string; password: string }) => {
             "User not found or inactive!"
         );
     }
-
+    if (user.status === UserStatus.SUSPEND) {
+        throw new ApiError(
+            StatusCodes.UNAUTHORIZED,
+            "User Suspended"
+        );
+    }
     const isCorrectPassword = await bcrypt.compare(password, user.password);
 
     if (!isCorrectPassword) {

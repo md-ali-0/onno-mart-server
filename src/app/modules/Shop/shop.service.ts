@@ -51,7 +51,10 @@ const getAll = async (
                       createdAt: "desc",
                   },
         include: {
-            vendor: true
+            vendor: true,
+            products: true,
+            orders: true,
+            followers: true
         },
     });
 
@@ -88,10 +91,7 @@ const update = async (id: string, files: any, data: Partial<Shop>) => {
         where: { id },
     });
 
-    const thumbnailFile = files?.thumbnail?.[0]?.path || "";
-    const newImageFiles = files?.images
-        ? files?.images.map((file: { path: string }) => file.path)
-        : [];
+    const thumbnailFile = files?.logoUrl?.[0]?.path || "";
 
     // If a new thumbnail is uploaded, update it
     if (thumbnailFile) {

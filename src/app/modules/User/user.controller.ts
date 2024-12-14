@@ -65,9 +65,23 @@ const updateMyProfie = catchAsync(async (req: Request & { user?: IAuthUser }, re
     })
 });
 
+const update = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const result = await userService.update(id, req.files, req.body);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "User data updated!",
+        data: result,
+    });
+});
+
+
 export const userController = {
     getAllFromDB,
     changeProfileStatus,
     getMyProfile,
-    updateMyProfie
+    updateMyProfie,
+    update
 }

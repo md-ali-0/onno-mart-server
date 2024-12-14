@@ -2,6 +2,8 @@ import express from 'express';
 import { AuthRoutes } from '../modules/Auth/auth.routes';
 import { BrandRoutes } from '../modules/Brand/brand.route';
 import { CategoryRoutes } from '../modules/Category/category.route';
+import { OrderRoutes } from '../modules/Order/order.route';
+import { PaymentRoutes } from '../modules/Payment/payment.route';
 import { ProductRoutes } from '../modules/Product/product.route';
 import { ShopRoutes } from '../modules/Shop/shop.route';
 import { userRoutes } from '../modules/User/user.routes';
@@ -32,6 +34,14 @@ const moduleRoutes = [
     {
         path: '/shop',
         route: ShopRoutes
+    },
+    {
+        path: '/order',
+        route: OrderRoutes
+    },
+    {
+        path: '/payment',
+        route: PaymentRoutes
     },
 ];
 

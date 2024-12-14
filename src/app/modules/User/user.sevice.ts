@@ -1,7 +1,5 @@
-import {
-    Prisma,
-    Role
-} from "@prisma/client";
+import { Prisma, Role, User } from "@prisma/client";
+import bcrypt from "bcrypt";
 import { Request } from "express";
 import { fileUploader } from "../../../helpars/fileUploader";
 import { paginationHelper } from "../../../helpars/paginationHelper";
@@ -56,6 +54,9 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
                   },
         select: {
             id: true,
+            name: true,
+            avatar: true,
+            status: true,
             email: true,
             role: true,
             createdAt: true,
@@ -67,11 +68,14 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
         where: whereConditons,
     });
 
+    const totalPage = Math.ceil(total / limit);
+
     return {
         meta: {
             page,
             limit,
             total,
+            totalPage,
         },
         data: result,
     };
@@ -118,16 +122,15 @@ const getMyProfile = async (user: IAuthUser) => {
                 userId: userInfo.id,
             },
             include: {
-                shop: true
-            }
+                shop: true,
+            },
         });
         const userData = {
-            ...userInfo, shop : vendorData?.shop
-        }
-        return userData
+            ...userInfo,
+            shop: vendorData?.shop,
+        };
+        return userData;
     }
-
-
 
     return userInfo;
 };
@@ -135,7 +138,7 @@ const getMyProfile = async (user: IAuthUser) => {
 const updateMyProfie = async (user: IAuthUser, req: Request) => {
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
-            id: user?.user
+            id: user?.user,
         },
     });
 
@@ -154,9 +157,34 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
     return profileInfo;
 };
 
+const update = async (id: string, files: any, data: Partial<User>): Promise<User> => {
+    await prisma.user.findUniqueOrThrow({
+        where: {
+            id
+        }
+    });
+
+    const avatar = files?.avatar?.[0]?.path || "";
+    if (avatar) {
+        data.avatar = avatar
+    }
+    if (data.password) {
+        data.password = bcrypt.hashSync(data.password, 10);
+    }
+    const result = await prisma.user.update({
+        where: {
+            id
+        },
+        data
+    });
+
+    return result;
+};
+
 export const userService = {
     getAllFromDB,
     changeProfileStatus,
     getMyProfile,
     updateMyProfie,
+    update
 };

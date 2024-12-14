@@ -14,17 +14,18 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
+  id            String     @id @default(cuid())
+  email         String     @unique
   password      String
   name          String
-  avatar        String   @default("https://res.cloudinary.com/dy8ef1ngb/image/upload/v1733646752/avatar_szqowp.png")
-  role          Role     @default(USER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  avatar        String     @default("https://res.cloudinary.com/dy8ef1ngb/image/upload/v1733646752/avatar_szqowp.png")
+  role          Role       @default(USER)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   orders        Order[]
   reviews       Review[]
-  followedShops Shop[]   @relation("FollowedShops")
+  status        UserStatus @default(ACTIVE)
+  followedShops Shop[]     @relation("FollowedShops")
   Vendor        Vendor?
 }
 
@@ -106,6 +107,7 @@ model Category {
 model Order {
   id          String      @id @default(cuid())
   userId      String
+  tranId      String      @unique
   user        User        @relation(fields: [userId], references: [id])
   shopId      String
   shop        Shop        @relation(fields: [shopId], references: [id])
@@ -148,6 +150,7 @@ enum Role {
 
 enum OrderStatus {
   PENDING
+  FAILED
   SHIPPED
   COMPLETED
   CANCELED
@@ -156,4 +159,9 @@ enum OrderStatus {
 enum ShopStatus {
   ACTIVE
   BLOCKED
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPEND
 }
