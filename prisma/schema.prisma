@@ -19,6 +19,12 @@ model User {
   password      String
   name          String
   avatar        String     @default("https://res.cloudinary.com/dy8ef1ngb/image/upload/v1733646752/avatar_szqowp.png")
+  phone         String?
+  city          String?
+  state         String?
+  zip_code      String?
+  address       String?
+  country       String?
   role          Role       @default(USER)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

@@ -1,7 +1,6 @@
 import { Role } from "@prisma/client";
 import express, { NextFunction, Request, Response } from "express";
 import { upload } from "../../../config/multer.config";
-import { fileUploader } from "../../../helpars/fileUploader";
 import auth from "../../middlewares/auth";
 import { userController } from "./user.controller";
 
@@ -16,13 +15,16 @@ router.get(
 );
 
 router.put(
-    "/update-my-profile",
+    "/me",
     auth(Role.ADMIN, Role.VENDOR, Role.USER),
-    fileUploader.upload.single("file"),
+    upload.fields([{ name: "avatar", maxCount: 1 }]),
     (req: Request, res: Response, next: NextFunction) => {
-        req.body = JSON.parse(req.body.data);
-        return userController.updateMyProfie(req, res, next);
-    }
+        if (req.body.data) {
+            req.body = JSON.parse(req.body.data);
+        }
+        next();
+    },
+    userController.updateMyProfie
 );
 
 router.patch(

@@ -55,7 +55,7 @@ const updateMyProfie = catchAsync(async (req: Request & { user?: IAuthUser }, re
 
     const user = req.user;
 
-    const result = await userService.updateMyProfie(user as IAuthUser, req);
+    const result = await userService.updateMyProfie(user as IAuthUser, req.files, req.body);
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,

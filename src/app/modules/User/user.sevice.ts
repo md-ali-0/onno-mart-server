@@ -1,11 +1,8 @@
 import { Prisma, Role, User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { Request } from "express";
-import { fileUploader } from "../../../helpars/fileUploader";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IAuthUser } from "../../interfaces/common";
-import { IFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { userSearchAbleFields } from "./user.constant";
 
@@ -110,6 +107,12 @@ const getMyProfile = async (user: IAuthUser) => {
             email: true,
             orders: true,
             reviews: true,
+            phone: true,
+            city: true,
+            state: true,
+            zip_code: true,
+            address: true,
+            country: true,
             followedShops: true,
             Vendor: true,
             role: true,
@@ -135,47 +138,58 @@ const getMyProfile = async (user: IAuthUser) => {
     return userInfo;
 };
 
-const updateMyProfie = async (user: IAuthUser, req: Request) => {
+const updateMyProfie = async (
+    user: IAuthUser,
+    files: any,
+    data: Partial<User>
+) => {
+    console.log(data);
+
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
             id: user?.user,
         },
     });
 
-    const file = req.file as IFile;
-    if (file) {
-        const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-        req.body.profilePhoto = uploadToCloudinary?.secure_url;
+    const avatar = files?.avatar?.[0]?.path || "";
+    if (avatar) {
+        data.avatar = avatar;
     }
-
+    if (data.password) {
+        data.password = bcrypt.hashSync(data.password, 10);
+    }
     const profileInfo = await prisma.user.update({
         where: {
             email: userInfo.email,
         },
-        data: req.body,
+        data: data,
     });
     return profileInfo;
 };
 
-const update = async (id: string, files: any, data: Partial<User>): Promise<User> => {
+const update = async (
+    id: string,
+    files: any,
+    data: Partial<User>
+): Promise<User> => {
     await prisma.user.findUniqueOrThrow({
         where: {
-            id
-        }
+            id,
+        },
     });
 
     const avatar = files?.avatar?.[0]?.path || "";
     if (avatar) {
-        data.avatar = avatar
+        data.avatar = avatar;
     }
     if (data.password) {
         data.password = bcrypt.hashSync(data.password, 10);
     }
     const result = await prisma.user.update({
         where: {
-            id
+            id,
         },
-        data
+        data,
     });
 
     return result;
@@ -186,5 +200,5 @@ export const userService = {
     changeProfileStatus,
     getMyProfile,
     updateMyProfie,
-    update
+    update,
 };
