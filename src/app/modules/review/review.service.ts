@@ -1,7 +1,15 @@
-import { Order, Prisma } from "@prisma/client";
+import { Prisma, Review } from "@prisma/client";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
+
+const create = async (payload: any) => {
+    const result = await prisma.review.create({
+        data: payload,
+    });
+
+    return result;
+};
 
 const getAll = async (
     params: Record<string, unknown>,
@@ -10,12 +18,12 @@ const getAll = async (
     const { page, limit, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, ...filterData } = params;
 
-    const andCondions: Prisma.OrderWhereInput[] = [];
+    const andCondions: Prisma.ReviewWhereInput[] = [];
 
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
-            OR: ["userId", "tranId", "shopId"].map((field) => ({
+            OR: ["userId", "productId"].map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
                     mode: "insensitive",
@@ -35,9 +43,9 @@ const getAll = async (
     }
 
     //console.dir(andCondions, { depth: 'inifinity' })
-    const whereConditons: Prisma.OrderWhereInput = { AND: andCondions };
+    const whereConditons: Prisma.ReviewWhereInput = { AND: andCondions };
 
-    const result = await prisma.order.findMany({
+    const result = await prisma.review.findMany({
         where: whereConditons,
         skip,
         take: limit,
@@ -51,16 +59,11 @@ const getAll = async (
                   },
         include: {
             user: true,
-            products: {
-                include: {
-                    product: true,
-                },
-            },
-            shop: true,
-        },
+            product: true
+        }
     });
 
-    const total = await prisma.order.count({
+    const total = await prisma.review.count({
         where: whereConditons,
     });
 
@@ -77,8 +80,8 @@ const getAll = async (
     };
 };
 
-const getOne = async (id: string): Promise<Order | null> => {
-    const result = await prisma.order.findUnique({
+const getOne = async (id: string): Promise<Review | null> => {
+    const result = await prisma.review.findUnique({
         where: {
             id,
         },
@@ -87,14 +90,14 @@ const getOne = async (id: string): Promise<Order | null> => {
     return result;
 };
 
-const update = async (id: string, data: Partial<Order>): Promise<Order> => {
-    await prisma.order.findUniqueOrThrow({
+const update = async (id: string, data: Partial<Review>): Promise<Review> => {
+    await prisma.review.findUniqueOrThrow({
         where: {
             id,
         },
     });
 
-    const result = await prisma.order.update({
+    const result = await prisma.review.update({
         where: {
             id,
         },
@@ -104,14 +107,14 @@ const update = async (id: string, data: Partial<Order>): Promise<Order> => {
     return result;
 };
 
-const remove = async (id: string): Promise<Order | null> => {
-    await prisma.order.findUniqueOrThrow({
+const remove = async (id: string): Promise<Review | null> => {
+    await prisma.review.findUniqueOrThrow({
         where: {
             id,
         },
     });
 
-    const result = await prisma.order.delete({
+    const result = await prisma.review.delete({
         where: {
             id,
         },
@@ -120,7 +123,8 @@ const remove = async (id: string): Promise<Order | null> => {
     return result;
 };
 
-export const OrderService = {
+export const ReviewService = {
+    create,
     getAll,
     getOne,
     update,

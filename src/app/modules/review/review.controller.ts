@@ -4,28 +4,33 @@ import sendResponse from "../../../shared/sendResponse";
 
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../../shared/catchAsync";
-import { OrderService } from "./order.service";
+import { ReviewService } from "./review.service";
+
+const create = catchAsync(async (req: Request, res: Response) => {
+    const result = await ReviewService.create(req.body);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Review data Created!",
+        data: result,
+    });
+});
 
 const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
-        const filters = pick(req.query, [
-            "userId",
-            "tranId",
-            "shopId",
-            "searchTerm",
-        ]);
+        const filters = pick(req.query,  ['userId','productId', 'searchTerm']);
         const options = pick(req.query, [
             "limit",
             "page",
             "sortBy",
             "sortOrder",
         ]);
-        const result = await OrderService.getAll(filters, options);
+        const result = await ReviewService.getAll(filters, options);
 
         sendResponse(res, {
             statusCode: StatusCodes.OK,
             success: true,
-            message: "Order data fetched!",
+            message: "Review data fetched!",
             meta: result.meta,
             data: result.data,
         });
@@ -35,11 +40,11 @@ const getAll: RequestHandler = catchAsync(
 const getOne = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await OrderService.getOne(id);
+    const result = await ReviewService.getOne(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Order data Created",
+        message: "Review data fetched by id!",
         data: result,
     });
 });
@@ -47,11 +52,11 @@ const getOne = catchAsync(async (req: Request, res: Response) => {
 const update = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await OrderService.update(id, req.body);
+    const result = await ReviewService.update(id, req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Order data updated!",
+        message: "Review data updated!",
         data: result,
     });
 });
@@ -59,16 +64,17 @@ const update = catchAsync(async (req: Request, res: Response) => {
 const remove = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await OrderService.remove(id);
+    const result = await ReviewService.remove(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Order data deleted!",
+        message: "Review data deleted!",
         data: result,
     });
 });
 
-export const OrderController = {
+export const ReviewController = {
+    create,
     getAll,
     getOne,
     update,
