@@ -1,5 +1,7 @@
+import { Role } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 import { upload } from "../../../config/multer.config";
+import auth from "../../middlewares/auth";
 import { ProductController } from "./product.controller";
 
 const router = Router();
@@ -9,6 +11,7 @@ router.get("/sellers-product", ProductController.getAll);
 router.get("/:slug", ProductController.getOne);
 router.post(
     "/",
+    auth(Role.VENDOR),
     upload.fields([
         { name: "images", maxCount: 10 },
         { name: "thumbnail", maxCount: 1 },

@@ -4,10 +4,12 @@ import sendResponse from "../../../shared/sendResponse";
 
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../../shared/catchAsync";
+import { IAuthUser } from "../../interfaces/common";
 import { ProductService } from "./product.service";
 
-const create = catchAsync(async (req: Request, res: Response) => {
-    const result = await ProductService.create(req.files, req.body);
+const create = catchAsync(async (req: Request  & { user?: IAuthUser }, res: Response) => {
+    const user = req.user
+    const result = await ProductService.create(req.files, user as IAuthUser, req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -34,7 +36,9 @@ const getAll: RequestHandler = catchAsync(
             "brandId",
             "categoryId",
             "shopId",
-            "searchTerm",
+            "minPrice",
+            "maxPrice",
+            "searchTerm"
         ]);
         const options = pick(req.query, [
             "limit",

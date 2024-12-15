@@ -1,10 +1,22 @@
-import { Prisma, Product } from "@prisma/client";
+import { Prisma, Product, UserStatus } from "@prisma/client";
 import fs from "fs";
+import { StatusCodes } from "http-status-codes";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
+import ApiError from "../../errors/ApiError";
+import { IAuthUser } from "../../interfaces/common";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
-const create = async (files: any, payload: Product) => {
+const create = async (files: any, user: IAuthUser, payload: Product) => {
+    const isVendorActive = await prisma.user.findUnique({
+        where: {
+            id: user?.user,
+            status: UserStatus.ACTIVE
+        }
+    })
+    if (!isVendorActive) {
+        throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Vender is Suspended")
+    }
     const thumbnailFile = files?.thumbnail?.[0]?.path || "";
     const imageFiles = files?.images
         ? files?.images.map((file: { path: any }) => file.path)
@@ -59,24 +71,41 @@ const getAll = async (
     options: IPaginationOptions
 ) => {
     const { page, limit, skip } = paginationHelper.calculatePagination(options);
-    const { searchTerm, ...filterData } = params;
+    const { searchTerm, minPrice, maxPrice, ...filterData } = params;
 
-    const andCondions: Prisma.ProductWhereInput[] = [];
+    const andConditions: Prisma.ProductWhereInput[] = [];
 
-    //console.log(filterData);
-    if (params.searchTerm) {
-        andCondions.push({
+    // Search term filter
+    if (searchTerm) {
+        andConditions.push({
             OR: ["name", "brandId", "categoryId", "shopId"].map((field) => ({
                 [field]: {
-                    contains: params.searchTerm,
+                    contains: searchTerm,
                     mode: "insensitive",
                 },
             })),
         });
     }
 
+    // Price range filter
+    if (minPrice || maxPrice) {
+        const priceCondition: Prisma.ProductWhereInput = {};
+        if (minPrice) {
+            priceCondition.price = {
+                gte: Number(minPrice),
+            };
+        }
+        if (maxPrice) {
+            priceCondition.price = {
+                lte: Number(maxPrice),
+            };
+        }
+        andConditions.push(priceCondition);
+    }
+
+    // Additional filters
     if (Object.keys(filterData).length > 0) {
-        andCondions.push({
+        andConditions.push({
             AND: Object.keys(filterData).map((key) => ({
                 [key]: {
                     equals: (filterData as any)[key],
@@ -85,11 +114,11 @@ const getAll = async (
         });
     }
 
-    //console.dir(andCondions, { depth: 'inifinity' })
-    const whereConditons: Prisma.ProductWhereInput = { AND: andCondions };
+    const whereConditions: Prisma.ProductWhereInput = { AND: andConditions };
 
+    // Query the products
     const result = await prisma.product.findMany({
-        where: whereConditons,
+        where: whereConditions,
         skip,
         take: limit,
         orderBy:
@@ -109,10 +138,11 @@ const getAll = async (
         },
     });
 
+    // Calculate average rating for each product
     const productsWithRating = result.map((product: any) => {
         const totalRatings = product.reviews.length;
         const sumRatings = product.reviews.reduce(
-            (sum: any, review: { rating: any; }) => sum + review.rating,
+            (sum: any, review: { rating: any }) => sum + review.rating,
             0
         );
         const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
@@ -123,8 +153,9 @@ const getAll = async (
         };
     });
 
+    // Get total count for pagination
     const total = await prisma.product.count({
-        where: whereConditons,
+        where: whereConditions,
     });
 
     const totalPage = Math.ceil(total / limit);

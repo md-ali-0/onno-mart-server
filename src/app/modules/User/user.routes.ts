@@ -15,7 +15,7 @@ router.get(
 );
 router.get(
     "/favorite-shop",
-    auth(Role.USER),
+    auth(Role.ADMIN, Role.VENDOR, Role.USER),
     userController.getAllFavoriteShop
 );
 

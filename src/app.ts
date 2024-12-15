@@ -1,18 +1,17 @@
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import express, { Application, NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
-import globalErrorHandler from './app/middlewares/globalErrorHandler';
-import router from './app/routes';
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express, { Application, NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import router from "./app/routes";
+import config from "./config";
 
 const app: Application = express();
 app.use(
     cors({
-        origin: [
-            'http://localhost:3000',
-        ],
+        origin: [config.client_url as string, "http://localhost:3000"],
         credentials: true,
-    }),
+    })
 );
 app.use(cookieParser());
 
@@ -20,13 +19,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
     res.send({
-        Message: "Ecommerce Backend Running.."
-    })
+        Message: "Ecommerce Backend Running..",
+    });
 });
 
-app.use('/api', router);
+app.use("/api", router);
 
 app.use(globalErrorHandler);
 
@@ -36,9 +35,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
         message: "API NOT FOUND!",
         error: {
             path: req.originalUrl,
-            message: "Your requested path is not found!"
-        }
-    })
-})
+            message: "Your requested path is not found!",
+        },
+    });
+});
 
 export default app;
