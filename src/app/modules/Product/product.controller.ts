@@ -31,7 +31,7 @@ const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
         const filters = pick(req.query, [
             "name",
-            "ProductId",
+            "brandId",
             "categoryId",
             "shopId",
             "searchTerm",

@@ -21,7 +21,7 @@ const prisma = new PrismaClient({
     ],
 })
 
-prisma.$on('query', (e: { query: string; params: string; duration: string; }) => {
+prisma.$on('query', (e: any) => {
     console.log("-------------------------------------------")
     console.log('Query: ' + e.query);
     console.log("-------------------------------------------")

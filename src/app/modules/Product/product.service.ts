@@ -54,7 +54,6 @@ const duplicate = async (productId: string) => {
     return result;
 };
 
-
 const getAll = async (
     params: Record<string, unknown>,
     options: IPaginationOptions
@@ -106,7 +105,22 @@ const getAll = async (
             category: true,
             shop: true,
             images: true,
+            reviews: true,
         },
+    });
+
+    const productsWithRating = result.map((product: any) => {
+        const totalRatings = product.reviews.length;
+        const sumRatings = product.reviews.reduce(
+            (sum: any, review: { rating: any; }) => sum + review.rating,
+            0
+        );
+        const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+
+        return {
+            ...product,
+            averageRating,
+        };
     });
 
     const total = await prisma.product.count({
@@ -122,11 +136,11 @@ const getAll = async (
             total,
             totalPage,
         },
-        data: result,
+        data: productsWithRating,
     };
 };
 
-const getOne = async (slug: string): Promise<Product | null> => {
+const getOne = async (slug: string) => {
     const result = await prisma.product.findUnique({
         where: {
             slug,
@@ -136,11 +150,31 @@ const getOne = async (slug: string): Promise<Product | null> => {
             category: true,
             shop: true,
             images: true,
+            reviews: {
+                include: {
+                    user: true,
+                },
+            },
         },
     });
 
+    if (result) {
+        const totalRatings = result.reviews.length;
+        const sumRatings = result.reviews.reduce(
+            (sum, review) => sum + review.rating,
+            0
+        );
+        const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+
+        return {
+            ...result,
+            rating: averageRating,
+        };
+    }
+
     return result;
 };
+
 
 const update = async (id: string, files: any, data: Partial<Product>) => {
     // Check if the product exists
