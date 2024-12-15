@@ -13,6 +13,11 @@ router.get(
     auth(Role.ADMIN, Role.VENDOR, Role.USER),
     userController.getMyProfile
 );
+router.get(
+    "/favorite-shop",
+    auth(Role.USER),
+    userController.getAllFavoriteShop
+);
 
 router.put(
     "/me",
@@ -38,6 +43,18 @@ router.patch(
         next();
     },
     userController.update
+);
+
+router.post(
+    "/followShop/:shopId",
+    auth(Role.USER),
+    userController.followShop
+);
+
+router.post(
+    "/unfollowShop/:shopId",
+    auth(Role.USER),
+    userController.unfollowShop
 );
 
 export const userRoutes = router;
