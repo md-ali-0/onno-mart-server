@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
 import config from '../../../config';
 
 const emailSender = async (
@@ -8,7 +8,7 @@ const emailSender = async (
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
-        secure: false, // Use `true` for port 465, `false` for all other ports
+        secure: false,
         auth: {
             user: config.emailSender.email,
             pass: config.emailSender.app_pass,
@@ -18,15 +18,12 @@ const emailSender = async (
         }
     });
 
-    const info = await transporter.sendMail({
-        from: '"PH Health Care" <fahimfiroz.ph@gmail.com>', // sender address
-        to: email, // list of receivers
-        subject: "Reset Password Link", // Subject line
-        //text: "Hello world?", // plain text body
-        html, // html body
+    await transporter.sendMail({
+        from: '"OnnoMart - Ecommerce Platform" <kvanessa337@gmail.com>',
+        to: email,
+        subject: "Reset Password Link",
+        html,
     });
-
-    //console.log("Message sent: %s", info.messageId);
 }
 
 export default emailSender;

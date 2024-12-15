@@ -80,6 +80,12 @@ const getOne = async (id: string): Promise<Shop | null> => {
         where: {
             id,
         },
+        include: {
+            vendor: true,
+            products: true,
+            orders: true,
+            followers: true
+        },
     });
 
     return result;

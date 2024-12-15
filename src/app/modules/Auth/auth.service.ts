@@ -222,6 +222,7 @@ const resetPassword = async (token: string, payload: { password: string }) => {
             token,
             config.jwt.reset_pass_secret as Secret
         );
+
     } catch (err) {
         throw new ApiError(
             StatusCodes.UNAUTHORIZED,
