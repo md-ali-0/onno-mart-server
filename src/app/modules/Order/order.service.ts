@@ -15,7 +15,7 @@ const getAll = async (
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
-            OR: ["userId", "tranId", "shopId"].map((field) => ({
+            OR: ["userId", "tranId", "shopId", "status"].map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
                     mode: "insensitive",

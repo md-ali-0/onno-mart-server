@@ -31,6 +31,30 @@ const create = async (files: any, payload: Product) => {
     return result;
 };
 
+const duplicate = async (productId: string) => {
+    const originalProduct = await prisma.product.findUnique({
+        where: { id: productId },
+    });
+
+    if (!originalProduct) {
+        throw new Error("Product not found");
+    }
+
+    const newSlug = `${originalProduct.slug}-2`;
+
+    const { id, ...productData } = originalProduct;
+
+    const result = await prisma.product.create({
+        data: {
+            ...productData,
+            slug: newSlug,
+        },
+    });
+
+    return result;
+};
+
+
 const getAll = async (
     params: Record<string, unknown>,
     options: IPaginationOptions
@@ -81,7 +105,7 @@ const getAll = async (
             brand: true,
             category: true,
             shop: true,
-            images: true
+            images: true,
         },
     });
 
@@ -111,7 +135,7 @@ const getOne = async (slug: string): Promise<Product | null> => {
             brand: true,
             category: true,
             shop: true,
-            images: true
+            images: true,
         },
     });
 
@@ -216,6 +240,7 @@ const remove = async (id: string): Promise<Product | null> => {
 
 export const ProductService = {
     create,
+    duplicate,
     getAll,
     getOne,
     update,

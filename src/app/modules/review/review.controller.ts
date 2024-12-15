@@ -18,7 +18,12 @@ const create = catchAsync(async (req: Request, res: Response) => {
 
 const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
-        const filters = pick(req.query,  ['userId','productId', 'searchTerm']);
+        const filters = pick(req.query, [
+            "userId",
+            "productId",
+            "shopId",
+            "searchTerm",
+        ]);
         const options = pick(req.query, [
             "limit",
             "page",

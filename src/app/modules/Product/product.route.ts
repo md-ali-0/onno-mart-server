@@ -22,6 +22,11 @@ router.post(
     ProductController.create
 );
 
+router.post(
+    "/duplicate/:productId",
+    ProductController.duplicate
+);
+
 router.patch(
     "/:id",
     upload.fields([

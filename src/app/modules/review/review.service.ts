@@ -23,7 +23,7 @@ const getAll = async (
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
-            OR: ["userId", "productId"].map((field) => ({
+            OR: ["userId", "productId","shopId"].map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
                     mode: "insensitive",

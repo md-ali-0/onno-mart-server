@@ -15,6 +15,17 @@ const create = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+const duplicate = catchAsync(async (req: Request, res: Response) => {
+    const {productId} = req.params
+
+    const result = await ProductService.duplicate(productId);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Product data created",
+        data: result,
+    });
+});
 
 const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
@@ -81,6 +92,7 @@ const remove = catchAsync(async (req: Request, res: Response) => {
 
 export const ProductController = {
     create,
+    duplicate,
     getAll,
     getOne,
     update,

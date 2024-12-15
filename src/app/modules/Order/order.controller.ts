@@ -12,6 +12,7 @@ const getAll: RequestHandler = catchAsync(
             "userId",
             "tranId",
             "shopId",
+            "status",
             "searchTerm",
         ]);
         const options = pick(req.query, [
