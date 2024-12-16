@@ -19,7 +19,9 @@ const getAll = async (
     const { searchTerm, ...filterData } = params;
 
     const andCondions: Prisma.ReviewWhereInput[] = [];
-
+    andCondions.push({
+        isDeleted: false,
+    });
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
@@ -114,12 +116,14 @@ const remove = async (id: string): Promise<Review | null> => {
         },
     });
 
-    const result = await prisma.review.delete({
+    const result = await prisma.review.update({
         where: {
             id,
         },
+        data: {
+            isDeleted: true,
+        },
     });
-
     return result;
 };
 

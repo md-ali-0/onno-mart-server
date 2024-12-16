@@ -11,7 +11,9 @@ const getAll = async (
     const { searchTerm, ...filterData } = params;
 
     const andCondions: Prisma.OrderWhereInput[] = [];
-
+    andCondions.push({
+        isDeleted: false,
+    });
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
@@ -111,9 +113,12 @@ const remove = async (id: string): Promise<Order | null> => {
         },
     });
 
-    const result = await prisma.order.delete({
+    const result = await prisma.order.update({
         where: {
             id,
+        },
+        data: {
+            isDeleted: true,
         },
     });
 

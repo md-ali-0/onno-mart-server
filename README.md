@@ -1,44 +1,157 @@
-# Onno Mart Server
+# OnnoMart - E-Commerce Application
 
-Welcome to the backend repository for Onno Mart, a tutorial project developed as part of the "Level 2 Web Development Course" offered by Programming Hero.
+## Description
 
-This repository contains the backend codebase responsible for handling server-side logic, database management, and communication between different system components.
+The **OnnoMart - E-Commerce Application** provides a comprehensive online shopping experience for users, vendors, and administrators. It serves as a platform where users can browse and purchase products, vendors can manage their shops and inventories, and administrators can monitor and moderate the system. The application is intuitive, responsive, and secure, ensuring a seamless experience for all roles.
 
-<!-- ## Table of Contents
-- [Onno Mart Backend](#ph-healthcare-backend)
-  - [Table of Contents](#table-of-contents)
-  - [Technologies Used](#technologies-used)
-  - [Features](#features)
-  - [Installation and Setup](#installation-and-setup)
-  - [Usage](#usage)
-  - [API Endpoints](#api-endpoints)
-  - [Contributing](#contributing)
-  - [License](#license) -->
+---
 
-<!-- ## Technologies Used
-- **Node.js**: Runtime environment for executing JavaScript code.
-- **Express.js**: Web application framework for building APIs and handling HTTP requests.
-- **Prisma**: ORM (Object-Relational Mapping) tool for database management.
-- **PostgreSQL**: Relational database management system.
-- **WEB RTC (Agora.io)**: Third-party service for real-time communication between users.
-- **JWT**: JSON Web Tokens for secure authentication and authorization.
-- **bcrypt**: Library for hashing passwords.
-- **nodemailer**: Library for sending email notifications. -->
+## Live URLs
 
-<!-- ## Features
-- **User Authentication and Authorization**: Secure authentication using JWT tokens.
-- **User Management**: CRUD operations for managing user accounts (Admin, Doctor, Patient).
-- **Appointment Management**: Create, update, and delete appointments.
-- **Real-time Communication**: Integration with WEB RTC for real-time communication between doctors and patients.
-- **Prescription Management**: Create, update, and delete prescriptions.
-- **Email Notifications**: Send email notifications for appointment confirmations, invoices, and prescription delivery. -->
+-   **Frontend Deployment**: [Frontend Live URL](https://onno-mart.vercel.app)
+-   **Backend Deployment**: [Backend Live URL](https://onnomart-api.vercel.app)
 
-## Installation and Setup
-1. Clone this repository: `git clone <repository_url>`
-2. Install dependencies: `npm install`
-3. Set up the environment variables by creating a `.env` file and filling in the required variables based on the provided `.env.example` file.
-4. Run the database migrations: `npx prisma migrate dev`
-4. Run the Command: `npm run seed`
-5. Start the server: `npm run dev`
+---
 
+## Technology Stack & Packages
 
+### Backend:
+
+-   **Framework**: Node.js with Express.js
+-   **Database**: PostgreSQL (managed using Prisma)
+-   **Authentication**: JSON Web Tokens (JWT)
+-   **Image Uploads**: Integrated with Cloudinary
+-   **Payment Gateways**: SSLCommerz and Aamarpay
+
+### Frontend:
+
+-   **Framework**: React.js or Next.js
+-   **State Management**: Redux
+-   **CSS**: TailwindCSS for styling
+
+### Other Packages:
+
+-   **bcrypt**: For password hashing
+-   **jsonwebtoken**: For handling authentication
+-   **multer**: For file uploads
+-   **pg**: PostgreSQL client for Node.js
+-   **redux**: For handeling state and rtk query making HTTP requests
+
+---
+
+## Features & Functionalities
+
+-   User Features:
+    -   Browse products with advanced filtering and sorting options.
+    -   Add items to the cart and checkout with secure payment options.
+    -   View order history and leave reviews for purchased products.
+    -   Compare up to three products from the same category.
+-   Vendor Features:
+    -   Manage shops and products (add, edit, or delete).
+    -   View and respond to customer reviews.
+    -   Track order history for better inventory management.
+-   Admin Features:
+    -   Manage users, vendors, and product categories.
+    -   Monitor transactions and platform activities.
+-   Other Features:
+    -   Follow specific shops for personalized product prioritization.
+    -   Recent products page to view recently browsed items.
+    -   Responsive design for an optimized experience across devices.
+
+### General Features:
+
+-   Mobile and desktop responsive design.
+-   Paginated APIs for list-based data (products, order history, etc.).
+-   Cart functionality allowing products only from one vendor at a time.
+-   Flash sale and related product views.
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+-   Node.js and npm installed
+-   PostgreSQL database running
+
+### Backend Setup:
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/md-ali-0/onno-mart-client.git
+    ```
+2. Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
+4. Create a `.env` file in the root of the backend directory and add the following:
+   `env
+   NODE_ENV="development"
+   PORT=3000
+   DATABASE_URL="postgresql://DB_USER:DB_PASS@localhost:5432/DB_NAME?schema=public"
+   JWT_SECRET="YOUR SECRET"
+   EXPIRES_IN="30d"
+   REFRESH_TOKEN_SECRET="YOUR SECRET"
+   REFRESH_TOKEN_EXPIRES_IN="30d"
+   RESET_PASS_TOKEN="YOUR TOKEN SECRET"
+   RESET_PASS_TOKEN_EXPIRES_IN="5m"
+   RESET_PASS_LINK="FRONT-END RESET PASSWORD FORM LINK"
+   EMAIL = "YOUR EMAIL"
+   APP_PASS = "YOUR APP PASSWORD"
+   STORE_ID = "SSL STORE ID"
+   STORE_PASS = "SSL STORE PASSWORD"
+   SUCCESS_URL = "http://localhost:3030/success"
+   CANCEL_URL = "http://localhost:3030/cancel"
+   FAIL_URL = "http://localhost:3030/fail"
+   SSL_PAYMENT_API = "PAYMENT API"
+   SSL_VALIDATIOIN_API = "PAYMENT VALIDATION API"
+    `
+5. Run database migrations:
+    ```bash
+    npx prisma migrate dev
+    ```
+6. Start the backend server:
+    ```bash
+    npm start
+    ```
+
+### Frontend Setup:
+
+1. Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+3. Create a `.env` file in the root of the frontend directory and add the following:
+    ```env
+    NEXT_PUBLIC_BASE_URL=<your-database-url>
+    AUTH_SECRET=<your-jwt-secret>
+    ```
+4. Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+---
+
+## Key Features & Functionality
+
+-   Comprehensive admin dashboard with user and product management capabilities.
+-   Vendor dashboard for shop and product management.
+-   Advanced cart functionality with vendor-specific restrictions.
+-   Integrated payment gateways (SSLCommerz and Aamarpay).
+-   Paginated APIs for efficient data handling.
+-   Responsive design for both mobile and desktop platforms.
+
+---
+
+## Contact
+
+For further queries or support, please feel free to reach out through the project repository or contact [Mohammad Ali](mailto:md.ali.office@gmail.com).

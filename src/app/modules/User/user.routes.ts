@@ -57,4 +57,6 @@ router.post(
     userController.unfollowShop
 );
 
+router.delete('/:id', auth(Role.ADMIN), userController.DeleteUser)
+
 export const userRoutes = router;

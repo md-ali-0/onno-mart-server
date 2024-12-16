@@ -20,6 +20,10 @@ const getAll = async (
 
     const andCondions: Prisma.CategoryWhereInput[] = [];
 
+    andCondions.push({
+        isDeleted: false,
+    });
+
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
@@ -113,12 +117,15 @@ const remove = async (id: string): Promise<Category | null> => {
         },
     });
 
-    const result = await prisma.category.delete({
+    const result = await prisma.category.update({
         where: {
             id,
         },
+        data: {
+            isDeleted: true,
+        },
     });
-
+    
     return result;
 };
 

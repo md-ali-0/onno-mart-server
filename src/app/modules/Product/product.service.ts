@@ -1,5 +1,4 @@
 import { Prisma, Product, UserStatus } from "@prisma/client";
-import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
@@ -74,6 +73,10 @@ const getAll = async (
     const { searchTerm, minPrice, maxPrice, ...filterData } = params;
 
     const andConditions: Prisma.ProductWhereInput[] = [];
+    
+    andConditions.push({
+        isDeleted: false,
+    });
 
     // Search term filter
     if (searchTerm) {
@@ -145,11 +148,11 @@ const getAll = async (
             (sum: any, review: { rating: any }) => sum + review.rating,
             0
         );
-        const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+        const rating = totalRatings > 0 ? sumRatings / totalRatings : 0;
 
         return {
             ...product,
-            averageRating,
+            rating,
         };
     });
 
@@ -270,34 +273,19 @@ const update = async (id: string, files: any, data: Partial<Product>) => {
 };
 
 const remove = async (id: string): Promise<Product | null> => {
-    // Fetch the product with its associated images
-    const product = await prisma.product.findUniqueOrThrow({
-        where: { id },
-        include: { images: true }, // Include images for deletion
+    await prisma.product.findUniqueOrThrow({
+        where: {
+            id,
+        },
     });
 
-    // Start a transaction to delete product and associated images
-    const result = await prisma.$transaction(async (tx) => {
-        // Delete associated images from the database
-        if (product.images.length > 0) {
-            await tx.image.deleteMany({
-                where: { productId: product.id },
-            });
-
-            // Optionally, delete files from the file system
-            product.images.forEach((image) => {
-                try {
-                    fs.unlinkSync(image.url); // Replace with actual path logic if needed
-                } catch (error) {
-                    console.error(`Error deleting file: ${image.url}`, error);
-                }
-            });
-        }
-
-        // Delete the product
-        return await tx.product.delete({
-            where: { id },
-        });
+    const result = await prisma.product.update({
+        where: {
+            id,
+        },
+        data: {
+            isDeleted: true,
+        },
     });
 
     return result;

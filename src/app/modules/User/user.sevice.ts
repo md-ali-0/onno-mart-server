@@ -11,7 +11,9 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
     const { searchTerm, ...filterData } = params;
 
     const andCondions: Prisma.UserWhereInput[] = [];
-
+    andCondions.push({
+        isDeleted : false,
+    });
     //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
@@ -87,7 +89,7 @@ const getAllFavoriteShops = async (
     const { searchTerm, ...filterData } = params;
   
     const andConditions: Prisma.ShopWhereInput[] = [];
-  
+
     // Add search condition for shop name
     if (searchTerm) {
       andConditions.push({
@@ -343,6 +345,26 @@ const unfollowShop = async (data: { userId: string; shopId: string }) => {
     return true;
 };
 
+const DeleteUser = async (id: string): Promise<User | null> => {
+
+    await prisma.user.findUniqueOrThrow({
+        where: {
+            id
+        }
+    });
+
+    const result = await prisma.user.update({
+        where: {
+            id
+        },
+        data: {
+            isDeleted: false
+        }
+    });
+
+    return result;
+}
+
 export const userService = {
     getAllFromDB,
     getAllFavoriteShops,
@@ -351,5 +373,6 @@ export const userService = {
     updateMyProfie,
     update,
     followShop,
-    unfollowShop
+    unfollowShop,
+    DeleteUser
 };

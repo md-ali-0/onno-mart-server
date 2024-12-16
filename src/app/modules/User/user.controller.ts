@@ -134,6 +134,19 @@ const update = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const DeleteUser = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const result = await userService.DeleteUser(id);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "User data deleted!",
+        data: result,
+    });
+});
+
+
 export const userController = {
     getAllFromDB,
     getAllFavoriteShop,
@@ -143,4 +156,5 @@ export const userController = {
     update,
     followShop,
     unfollowShop,
+    DeleteUser
 };

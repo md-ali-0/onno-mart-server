@@ -45,6 +45,12 @@ const loginUser = async (payload: { email: string; password: string }) => {
             "User Suspended"
         );
     }
+    if (user.isDeleted) {
+        throw new ApiError(
+            StatusCodes.UNAUTHORIZED,
+            "User Deleted"
+        );
+    }
     const isCorrectPassword = await bcrypt.compare(password, user.password);
 
     if (!isCorrectPassword) {

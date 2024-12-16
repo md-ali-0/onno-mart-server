@@ -31,6 +31,7 @@ model User {
   orders        Order[]
   reviews       Review[]
   status        UserStatus @default(ACTIVE)
+  isDeleted     Boolean?   @default(false)
   followedShops Shop[]     @relation("FollowedShops")
   Vendor        Vendor?
 }
@@ -78,6 +79,7 @@ model Product {
   shop        Shop?       @relation(fields: [shopId], references: [id])
   reviews     Review[]
   OrderItem   OrderItem[]
+  isDeleted    Boolean?    @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -98,6 +100,7 @@ model Brand {
   image     String
   products  Product[]
   createdAt DateTime  @default(now())
+  isDeleted  Boolean?  @default(false)
   updatedAt DateTime  @updatedAt
 }
 
@@ -108,6 +111,7 @@ model Category {
   icon      String
   products  Product[]
   createdAt DateTime  @default(now())
+  isDeleted  Boolean?  @default(false)
   updatedAt DateTime  @updatedAt
 }
 
@@ -122,6 +126,7 @@ model Order {
   totalAmount   Float
   paymentMethod String
   status        OrderStatus @default(PENDING)
+  isDeleted      Boolean?    @default(false)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
@@ -148,6 +153,7 @@ model Review {
   shop      Shop     @relation(fields: [shopId], references: [id])
   rating    Int
   comment   String?
+  isDeleted  Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
