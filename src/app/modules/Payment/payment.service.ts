@@ -1,54 +1,31 @@
 import { StatusCodes } from "http-status-codes";
-import SSLCommerz from "sslcommerz-lts";
-import config from "../../../config";
+
 import prisma from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
+import { PaymentIntent } from "./payment.intent";
 
-const create = async (payload: any) => {
+const create = async (paymentMethod: string, payload: any) => {
     const { userId, shopId, products, customer, totalAmount } = payload;
     const tran_id = `${userId}_${Date.now()}`;
-    const is_live = false;
+    const currency = "BDT"
+
+    if (paymentMethod !== "SSLCommerz" && paymentMethod !== "AmarPay") {
+        
+        throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Invalid Payment Method Selected")
+    }
 
     try {
-        const data = {
-            store_id: config.ssl.storeId as string,
-            store_passwd: config.ssl.storePass as string,
-            total_amount: Number(totalAmount),
-            currency: "BDT",
-            tran_id: tran_id,
-            success_url: config.ssl.successUrl as string,
-            fail_url: config.ssl.failUrl as string,
-            cancel_url: config.ssl.cancelUrl as string,
-            ipn_url: "http://localhost:3030/ipn",
-            shipping_method: "Courier",
-            product_name: "payload.products",
-            product_category: "Electronic",
-            product_profile: "general",
-            cus_name: `${customer.firstName} ${customer.lastName}`,
-            cus_email: customer.email,
-            cus_add1: customer.address,
-            cus_phone: customer.phone,
-            cus_fax: customer.phone,
-            ship_name: customer.address,
-            ship_add1: "Dhaka",
-            ship_add2: "Dhaka",
-            ship_city: "Dhaka",
-            ship_state: "Dhaka",
-            ship_postcode: 1000,
-            ship_country: "Bangladesh",
-        };
+        let GatewayPageURL
 
-        const sslcz = new SSLCommerz(
-            config.ssl.storeId as string,
-            config.ssl.storePass as string,
-            is_live
-        );
-        const GatewayPageURL = sslcz.init(data).then((apiResponse) => {
-            // Redirect the user to payment gateway
-            let GatewayPageURL = apiResponse.GatewayPageURL;
-            return GatewayPageURL
-        });
-
+        if (paymentMethod === "SSLCommerz") {
+            GatewayPageURL = await PaymentIntent.SSLIntent(tran_id, customer, currency, totalAmount)
+        }
+        if (paymentMethod === "AmarPay") {
+            GatewayPageURL = await PaymentIntent.AmarPayIntent(tran_id, customer, currency, totalAmount)
+        }
+        if (!GatewayPageURL) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to Create Payment Intent")
+        }
         await prisma.$transaction(async (tx) => {
             // Validate inventory availability
 
@@ -70,6 +47,7 @@ const create = async (payload: any) => {
                     userId,
                     tranId: tran_id,
                     shopId,
+                    paymentMethod,
                     totalAmount : Number(totalAmount),
                 },
             });
@@ -103,13 +81,14 @@ const create = async (payload: any) => {
 };
 
 const paymentSuccess = async (payload: any) => {
-    if (payload.status !== "VALID") {
+
+    if (payload.status !== "VALID" && payload.pay_status !== "Successful") {
         throw new ApiError(StatusCodes.NOT_FOUND, "Invalid payment");
     }
 
     const result = await prisma.order.update({
         where: {
-            tranId: payload.tran_id,
+            tranId: payload.tran_id || payload.mer_txnid,
         },
         data: {
             status: "COMPLETED",
@@ -121,9 +100,14 @@ const paymentSuccess = async (payload: any) => {
     return result;
 };
 const paymentFail = async (payload: any) => {
+    
+    if (payload.status !== "FAILED" && payload.pay_status !== "Failed") {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Invalid payment");
+    }
+    
     const result = await prisma.order.update({
         where: {
-            tranId: payload.tran_id,
+            tranId: payload.tran_id || payload.mer_txnid,
         },
         data: {
             status: "FAILED",
@@ -136,6 +120,7 @@ const paymentFail = async (payload: any) => {
 };
 
 const paymentCancel = async (payload: any) => {
+
     const result = await prisma.order.update({
         where: {
             tranId: payload.tran_id,

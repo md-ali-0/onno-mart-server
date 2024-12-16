@@ -7,7 +7,9 @@ import catchAsync from "../../../shared/catchAsync";
 import { PaymentService } from "./payment.service";
 
 const create = catchAsync(async (req: Request, res: Response) => {
-    const result = await PaymentService.create(req.body);
+    const { paymentMethod } = req.params
+
+    const result = await PaymentService.create(paymentMethod, req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
@@ -15,6 +17,7 @@ const create = catchAsync(async (req: Request, res: Response) => {
         data: result,
     });
 });
+
 
 const paymentSuccess = catchAsync(async (req: Request, res: Response) => {
 

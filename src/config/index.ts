@@ -31,5 +31,9 @@ export default {
         failUrl: process.env.FAIL_URL,
         sslPaymentApi: process.env.SSL_PAYMENT_API,
         sslValidationApi: process.env.SSL_VALIDATIOIN_API
+    },
+    AmarPay: {
+        store_id: process.env.AMARPAY_STORE_ID,
+        signature_key: process.env.AMARPAY_SIGNATURE_KEY,
     }
 }
