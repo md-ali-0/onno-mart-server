@@ -77,7 +77,7 @@ The **OnnoMart - E-Commerce Application** is a complete online shopping platform
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/md-ali-0/onno-mart-client.git
+    git clone https://github.com/md-ali-0/onno-mart-server.git
     ```
 2. Navigate to the backend directory:
     ```bash
@@ -118,26 +118,6 @@ The **OnnoMart - E-Commerce Application** is a complete online shopping platform
     npm start
     ```
 
-### Frontend Setup:
-
-1. Navigate to the frontend directory:
-    ```bash
-    cd frontend
-    ```
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-3. Create a `.env` file in the root of the frontend directory and add the following:
-    ```env
-    NEXT_PUBLIC_BASE_URL=<your-database-url>
-    AUTH_SECRET=<your-jwt-secret>
-    ```
-4. Start the development server:
-    ```bash
-    npm run dev
-    ```
-
 ---
 
 ## Key Features & Functionality
@@ -150,6 +130,19 @@ The **OnnoMart - E-Commerce Application** is a complete online shopping platform
 -   Responsive design for both mobile and desktop platforms.
 
 ---
+
+### Admin:
+- Email: admin@gmail.com
+- Password: 123456
+
+### Vendor:
+- Email: vendor1@gmail.com
+- Password: 123456
+
+### Customer:
+- Email: ali@gmail.com
+- Password: 123456
+
 
 ## Contact
 For queries or support, reach out via [Mohammad Ali](mailto:md.ali.office@gmail.com). or the project repository.
