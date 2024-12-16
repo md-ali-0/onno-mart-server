@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@prisma/client':
-        specifier: 5.11.0
-        version: 5.11.0(prisma@6.0.1)
+        specifier: 6.0.1
+        version: 6.0.1(prisma@6.0.1)
       axios:
         specifier: ^1.7.8
         version: 1.7.8
@@ -244,9 +244,9 @@ packages:
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
 
-  '@prisma/client@5.11.0':
-    resolution: {integrity: sha512-SWshvS5FDXvgJKM/a0y9nDC1rqd7KG0Q6ZVzd+U7ZXK5soe73DJxJJgbNBt2GNXOa+ysWB4suTpdK5zfFPhwiw==}
-    engines: {node: '>=16.13'}
+  '@prisma/client@6.0.1':
+    resolution: {integrity: sha512-60w7kL6bUxz7M6Gs/V+OWMhwy94FshpngVmOY05TmGD0Lhk+Ac0ZgtjlL6Wll9TD4G03t4Sq1wZekNVy+Xdlbg==}
+    engines: {node: '>=18.18'}
     peerDependencies:
       prisma: '*'
     peerDependenciesMeta:
@@ -1089,7 +1089,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@prisma/client@5.11.0(prisma@6.0.1)':
+  '@prisma/client@6.0.1(prisma@6.0.1)':
     optionalDependencies:
       prisma: 6.0.1
 

@@ -10,11 +10,11 @@ const create = async (files: any, user: IAuthUser, payload: Product) => {
     const isVendorActive = await prisma.user.findUnique({
         where: {
             id: user?.user,
-            status: UserStatus.ACTIVE
-        }
-    })
+            status: UserStatus.ACTIVE,
+        },
+    });
     if (!isVendorActive) {
-        throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Vender is Suspended")
+        throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Vender is Suspended");
     }
     const thumbnailFile = files?.thumbnail?.[0]?.path || "";
     const imageFiles = files?.images
@@ -73,12 +73,11 @@ const getAll = async (
     const { searchTerm, minPrice, maxPrice, ...filterData } = params;
 
     const andConditions: Prisma.ProductWhereInput[] = [];
-    
+
     andConditions.push({
         isDeleted: false,
     });
 
-    // Search term filter
     if (searchTerm) {
         andConditions.push({
             OR: ["name", "brandId", "categoryId", "shopId"].map((field) => ({
@@ -90,7 +89,6 @@ const getAll = async (
         });
     }
 
-    // Price range filter
     if (minPrice || maxPrice) {
         const priceCondition: Prisma.ProductWhereInput = {};
         if (minPrice) {
@@ -106,7 +104,6 @@ const getAll = async (
         andConditions.push(priceCondition);
     }
 
-    // Additional filters
     if (Object.keys(filterData).length > 0) {
         andConditions.push({
             AND: Object.keys(filterData).map((key) => ({
@@ -119,7 +116,6 @@ const getAll = async (
 
     const whereConditions: Prisma.ProductWhereInput = { AND: andConditions };
 
-    // Query the products
     const result = await prisma.product.findMany({
         where: whereConditions,
         skip,
@@ -187,6 +183,11 @@ const getOne = async (slug: string) => {
             reviews: {
                 include: {
                     user: true,
+                    replies: {
+                        include: {
+                            user: true
+                        }
+                    },
                 },
             },
         },
@@ -209,12 +210,10 @@ const getOne = async (slug: string) => {
     return result;
 };
 
-
 const update = async (id: string, files: any, data: Partial<Product>) => {
-    // Check if the product exists
     const existingProduct = await prisma.product.findUniqueOrThrow({
         where: { id },
-        include: { images: true }, // Include associated images for comparison
+        include: { images: true },
     });
 
     const thumbnailFile = files?.thumbnail?.[0]?.path || "";
@@ -222,28 +221,22 @@ const update = async (id: string, files: any, data: Partial<Product>) => {
         ? files?.images.map((file: { path: string }) => file.path)
         : [];
 
-    // If a new thumbnail is uploaded, update it
     if (thumbnailFile) {
         data.thumbnail = thumbnailFile;
     }
 
-    // Start a transaction
     const result = await prisma.$transaction(async (tx) => {
-        // Update the product
         const updatedProduct = await tx.product.update({
             where: { id },
             data,
         });
 
-        // Handle images
         if (newImageFiles.length > 0) {
-            // Delete old images if they are not in the new images list
             const oldImages = existingProduct.images;
             const imagesToDelete = oldImages.filter(
                 (image) => !newImageFiles.includes(image.url)
             );
 
-            // Delete old images from the database
             if (imagesToDelete.length > 0) {
                 await tx.image.deleteMany({
                     where: {
@@ -252,12 +245,8 @@ const update = async (id: string, files: any, data: Partial<Product>) => {
                         },
                     },
                 });
-
-                // Optionally, remove images from the file system here
-                // imagesToDelete.forEach(image => fs.unlinkSync(image.url));
             }
 
-            // Add new images
             await tx.image.createMany({
                 data: newImageFiles.map((image: any) => ({
                     url: image,

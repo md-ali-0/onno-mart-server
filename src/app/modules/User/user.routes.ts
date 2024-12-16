@@ -47,16 +47,16 @@ router.patch(
 
 router.post(
     "/followShop/:shopId",
-    auth(Role.USER),
+    auth(Role.ADMIN, Role.VENDOR, Role.USER),
     userController.followShop
 );
 
 router.post(
     "/unfollowShop/:shopId",
-    auth(Role.USER),
+    auth(Role.ADMIN, Role.VENDOR, Role.USER),
     userController.unfollowShop
 );
 
-router.delete('/:id', auth(Role.ADMIN), userController.DeleteUser)
+router.delete("/:id", auth(Role.ADMIN), userController.DeleteUser);
 
 export const userRoutes = router;

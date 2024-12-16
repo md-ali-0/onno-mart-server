@@ -16,6 +16,16 @@ const create = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const createReply = catchAsync(async (req: Request, res: Response) => {
+    const result = await ReviewService.createReply(req.body);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Review Reply data Created!",
+        data: result,
+    });
+});
+
 const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
         const filters = pick(req.query, [
@@ -80,6 +90,7 @@ const remove = catchAsync(async (req: Request, res: Response) => {
 
 export const ReviewController = {
     create,
+    createReply,
     getAll,
     getOne,
     update,

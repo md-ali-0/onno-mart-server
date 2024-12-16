@@ -10,6 +10,12 @@ const create = async (payload: any) => {
 
     return result;
 };
+const createReply = async (payload: any) => {
+    const result = await prisma.reviewReply.create({
+        data: payload,
+    });
+    return result;
+};
 
 const getAll = async (
     params: Record<string, unknown>,
@@ -129,6 +135,7 @@ const remove = async (id: string): Promise<Review | null> => {
 
 export const ReviewService = {
     create,
+    createReply,
     getAll,
     getOne,
     update,
