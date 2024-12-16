@@ -1,13 +1,11 @@
 # OnnoMart - E-Commerce Application
 
-## Description
-
-The **OnnoMart - E-Commerce Application** provides a comprehensive online shopping experience for users, vendors, and administrators. It serves as a platform where users can browse and purchase products, vendors can manage their shops and inventories, and administrators can monitor and moderate the system. The application is intuitive, responsive, and secure, ensuring a seamless experience for all roles.
+## Project Name & Description
+The **OnnoMart - E-Commerce Application** is a complete online shopping platform designed to cater to users, vendors, and administrators. It provides an intuitive, secure, and responsive experience for all roles. Users can browse and purchase products, vendors can manage shops and inventories, and administrators can monitor and control the entire system. The application is built with modern web technologies and ensures scalability and high performance.
 
 ---
 
 ## Live URLs
-
 -   **Frontend Deployment**: [Frontend Live URL](https://onno-mart.vercel.app)
 -   **Backend Deployment**: [Backend Live URL](https://onnomart-api.vercel.app)
 
@@ -66,6 +64,7 @@ The **OnnoMart - E-Commerce Application** provides a comprehensive online shoppi
 -   Flash sale and related product views.
 
 ---
+
 
 ## Setup Instructions
 
@@ -153,5 +152,4 @@ The **OnnoMart - E-Commerce Application** provides a comprehensive online shoppi
 ---
 
 ## Contact
-
-For further queries or support, please feel free to reach out through the project repository or contact [Mohammad Ali](mailto:md.ali.office@gmail.com).
+For queries or support, reach out via [Mohammad Ali](mailto:md.ali.office@gmail.com). or the project repository.
