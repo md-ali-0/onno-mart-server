@@ -29,7 +29,6 @@ const getAll = async (
         isDeleted: false,
     });
 
-    //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
             OR: ["name"].map((field) => ({

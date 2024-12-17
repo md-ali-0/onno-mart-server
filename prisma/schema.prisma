@@ -157,17 +157,17 @@ model Review {
   isDeleted   Boolean?   @default(false)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  replies     ReviewReply[] // A review can have multiple replies
+  replies     ReviewReply[]
 }
 
 model ReviewReply {
   id          String   @id @default(cuid())
-  reviewId    String   // Foreign key to Review
+  reviewId    String
   review      Review   @relation(fields: [reviewId], references: [id])
-  userId      String   // The user who replied to the review
+  userId      String
   user        User     @relation(fields: [userId], references: [id])
-  comment     String?  // The content of the reply
-  isDeleted   Boolean? @default(false)  // Soft delete for replies
+  comment     String?
+  isDeleted   Boolean? @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

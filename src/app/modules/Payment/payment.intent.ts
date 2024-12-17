@@ -44,7 +44,6 @@ const SSLIntent = async (
         is_live
     );
     const GatewayPageURL = sslcz.init(data).then((apiResponse) => {
-        // Redirect the user to payment gateway
         let GatewayPageURL = apiResponse.GatewayPageURL;
         return GatewayPageURL;
     });

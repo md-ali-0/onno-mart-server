@@ -8,7 +8,6 @@ import prisma from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
 import emailSender from "./emailSender";
 
-// Utility function for generating tokens
 const generateTokens = (user: { id: string; role: Role }) => {
     const accessToken = jwtHelpers.generateToken(
         { user: user.id, role: user.role },
@@ -25,7 +24,6 @@ const generateTokens = (user: { id: string; role: Role }) => {
     return { accessToken, refreshToken };
 };
 
-// Login Service
 const loginUser = async (payload: { email: string; password: string }) => {
     const { email, password } = payload;
 
@@ -65,7 +63,6 @@ const loginUser = async (payload: { email: string; password: string }) => {
     };
 };
 
-// Signup Service
 const signupUser = async (payload: {
     name: string;
     email: string;
@@ -126,7 +123,7 @@ const vendorSignup = async (files: any, payload: any) => {
 
     return result;
 };
-// Refresh Token Service
+
 const refreshToken = async (token: string) => {
     let decodedToken;
     try {
@@ -158,7 +155,6 @@ const refreshToken = async (token: string) => {
     return { accessToken };
 };
 
-// Change Password Service
 const changePassword = async (
     user: { email: string },
     payload: { oldPassword: string; newPassword: string }
@@ -192,7 +188,6 @@ const changePassword = async (
     return { message: "Password changed successfully!" };
 };
 
-// Forgot Password Service
 const forgotPassword = async (payload: { email: string }) => {
     const { email } = payload;
 
@@ -220,7 +215,7 @@ const forgotPassword = async (payload: { email: string }) => {
     );
 };
 
-// Reset Password Service
+
 const resetPassword = async (token: string, payload: { password: string }) => {
     let decodedToken;
     try {
@@ -246,7 +241,6 @@ const resetPassword = async (token: string, payload: { password: string }) => {
     return { message: "Password reset successful!" };
 };
 
-// Export Auth Services
 export const AuthServices = {
     loginUser,
     signupUser,

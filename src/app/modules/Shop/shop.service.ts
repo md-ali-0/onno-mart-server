@@ -13,7 +13,6 @@ const getAll = async (
 
     const andCondions: Prisma.ShopWhereInput[] = [];
 
-    //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
             OR: ["name", "brandId", "categoryId", "shopId"].map((field) => ({
@@ -92,21 +91,17 @@ const getOne = async (id: string): Promise<Shop | null> => {
 };
 
 const update = async (id: string, files: any, data: Partial<Shop>) => {
-    // Check if the product exists
     const existingProduct = await prisma.shop.findUniqueOrThrow({
         where: { id },
     });
 
     const thumbnailFile = files?.logoUrl?.[0]?.path || "";
 
-    // If a new thumbnail is uploaded, update it
     if (thumbnailFile) {
         data.logoUrl = thumbnailFile;
     }
 
-    // Start a transaction
     const result = await prisma.$transaction(async (tx) => {
-        // Update the product
         const updatedProduct = await tx.shop.update({
             where: { id },
             data,
@@ -119,31 +114,25 @@ const update = async (id: string, files: any, data: Partial<Shop>) => {
 };
 
 const remove = async (id: string): Promise<Product | null> => {
-    // Fetch the product with its associated images
     const product = await prisma.product.findUniqueOrThrow({
         where: { id },
-        include: { images: true }, // Include images for deletion
+        include: { images: true },
     });
 
-    // Start a transaction to delete product and associated images
     const result = await prisma.$transaction(async (tx) => {
-        // Delete associated images from the database
         if (product.images.length > 0) {
             await tx.image.deleteMany({
                 where: { productId: product.id },
             });
 
-            // Optionally, delete files from the file system
             product.images.forEach((image) => {
                 try {
-                    fs.unlinkSync(image.url); // Replace with actual path logic if needed
+                    fs.unlinkSync(image.url);
                 } catch (error) {
                     console.error(`Error deleting file: ${image.url}`, error);
                 }
             });
         }
-
-        // Delete the product
         return await tx.product.delete({
             where: { id },
         });

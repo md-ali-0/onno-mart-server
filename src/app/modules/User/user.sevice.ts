@@ -90,7 +90,6 @@ const getAllFavoriteShops = async (
   
     const andConditions: Prisma.ShopWhereInput[] = [];
 
-    // Add search condition for shop name
     if (searchTerm) {
       andConditions.push({
         name: {
@@ -99,8 +98,7 @@ const getAllFavoriteShops = async (
         },
       });
     }
-  
-    // Add filter conditions based on provided filterData
+
     if (Object.keys(filterData).length > 0) {
       andConditions.push({
         AND: Object.keys(filterData).map((key) => ({
@@ -113,8 +111,7 @@ const getAllFavoriteShops = async (
   
     const whereConditions: Prisma.ShopWhereInput =
       andConditions.length > 0 ? { AND: andConditions } : {};
-  
-    // Find favorite shops based on userId
+
     const result = await prisma.shop.findMany({
       where: {
         followers: {
@@ -147,8 +144,7 @@ const getAllFavoriteShops = async (
         updatedAt: true,
       },
     });
-  
-    // Count total favorite shops
+
     const total = await prisma.shop.count({
       where: {
         followers: {

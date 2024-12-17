@@ -137,7 +137,6 @@ const getAll = async (
         },
     });
 
-    // Calculate average rating for each product
     const productsWithRating = result.map((product: any) => {
         const totalRatings = product.reviews.length;
         const sumRatings = product.reviews.reduce(
@@ -152,7 +151,6 @@ const getAll = async (
         };
     });
 
-    // Get total count for pagination
     const total = await prisma.product.count({
         where: whereConditions,
     });

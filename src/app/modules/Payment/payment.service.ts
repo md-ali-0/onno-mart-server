@@ -27,7 +27,6 @@ const create = async (paymentMethod: string, payload: any) => {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to Create Payment Intent")
         }
         await prisma.$transaction(async (tx) => {
-            // Validate inventory availability
 
             for (const product of products) {
                 const productData = await tx.product.findUnique({
@@ -41,7 +40,6 @@ const create = async (paymentMethod: string, payload: any) => {
                 }
             }
 
-            // Create the Order
             const order = await tx.order.create({
                 data: {
                     userId,
@@ -52,7 +50,6 @@ const create = async (paymentMethod: string, payload: any) => {
                 },
             });
 
-            // Create OrderItems and update product inventory
             for (const product of products) {
                 await tx.orderItem.create({
                     data: {
