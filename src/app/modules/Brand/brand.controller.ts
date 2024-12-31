@@ -11,7 +11,7 @@ const create = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Brand data fetched by id!",
+        message: "Brand data created!",
         data: result,
     });
 });

@@ -14,27 +14,27 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
+  id            String        @id @default(cuid())
+  email         String        @unique
   password      String
   name          String
-  avatar        String     @default("https://res.cloudinary.com/dy8ef1ngb/image/upload/v1733646752/avatar_szqowp.png")
+  avatar        String        @default("https://res.cloudinary.com/dy8ef1ngb/image/upload/v1733646752/avatar_szqowp.png")
   phone         String?
   city          String?
   state         String?
   zip_code      String?
   address       String?
   country       String?
-  role          Role       @default(USER)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  role          Role          @default(USER)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   orders        Order[]
   reviews       Review[]
-  status        UserStatus @default(ACTIVE)
-  isDeleted     Boolean?   @default(false)
-  followedShops Shop[]     @relation("FollowedShops")
+  status        UserStatus    @default(ACTIVE)
+  isDeleted     Boolean?      @default(false)
+  followedShops Shop[]        @relation("FollowedShops")
   Vendor        Vendor?
-  ReviewReply ReviewReply[]
+  ReviewReply   ReviewReply[]
 }
 
 model Vendor {
@@ -80,7 +80,7 @@ model Product {
   shop        Shop?       @relation(fields: [shopId], references: [id])
   reviews     Review[]
   OrderItem   OrderItem[]
-  isDeleted    Boolean?    @default(false)
+  isDeleted   Boolean?    @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -101,7 +101,7 @@ model Brand {
   image     String
   products  Product[]
   createdAt DateTime  @default(now())
-  isDeleted  Boolean?  @default(false)
+  isDeleted Boolean?  @default(false)
   updatedAt DateTime  @updatedAt
 }
 
@@ -109,10 +109,10 @@ model Category {
   id        String    @id @default(cuid())
   name      String    @unique
   slug      String    @unique
-  icon      String
+  image     String?
   products  Product[]
   createdAt DateTime  @default(now())
-  isDeleted  Boolean?  @default(false)
+  isDeleted Boolean?  @default(false)
   updatedAt DateTime  @updatedAt
 }
 
@@ -127,7 +127,7 @@ model Order {
   totalAmount   Float
   paymentMethod String
   status        OrderStatus @default(PENDING)
-  isDeleted      Boolean?    @default(false)
+  isDeleted     Boolean?    @default(false)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
@@ -145,31 +145,59 @@ model OrderItem {
 }
 
 model Review {
-  id          String     @id @default(cuid())
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
-  productId   String
-  product     Product    @relation(fields: [productId], references: [id])
-  shopId      String
-  shop        Shop       @relation(fields: [shopId], references: [id])
-  rating      Int
-  comment     String?
-  isDeleted   Boolean?   @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  replies     ReviewReply[]
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  productId String
+  product   Product       @relation(fields: [productId], references: [id])
+  shopId    String
+  shop      Shop          @relation(fields: [shopId], references: [id])
+  rating    Int
+  comment   String?
+  isDeleted Boolean?      @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  replies   ReviewReply[]
 }
 
 model ReviewReply {
-  id          String   @id @default(cuid())
-  reviewId    String
-  review      Review   @relation(fields: [reviewId], references: [id])
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  comment     String?
-  isDeleted   Boolean? @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  reviewId  String
+  review    Review   @relation(fields: [reviewId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  comment   String?
+  isDeleted Boolean? @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Newsletter {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  firstName      String?
+  lastName       String?
+  subscribedAt   DateTime  @default(now())
+  isDeleted      Boolean?  @default(false)
+  unsubscribedAt DateTime?
+}
+
+model Coupon {
+  id          String     @id @default(cuid())
+  code        String     @unique
+  discount    Int
+  description String?
+  type        CouponType
+  startDate   DateTime?
+  endDate     DateTime?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED_AMOUNT
 }
 
 enum Role {

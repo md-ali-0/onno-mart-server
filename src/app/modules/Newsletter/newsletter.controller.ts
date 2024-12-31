@@ -4,14 +4,14 @@ import sendResponse from "../../../shared/sendResponse";
 
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../../shared/catchAsync";
-import { CategoryService } from "./category.service";
+import { NewsletterService } from "./newsletter.service";
 
 const create = catchAsync(async (req: Request, res: Response) => {
-    const result = await CategoryService.create(req.files, req.body);
+    const result = await NewsletterService.create(req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data Created!",
+        message: "Newsletter data Created!",
         data: result,
     });
 });
@@ -25,12 +25,12 @@ const getAll: RequestHandler = catchAsync(
             "sortBy",
             "sortOrder",
         ]);
-        const result = await CategoryService.getAll(filters, options);
+        const result = await NewsletterService.getAll(filters, options);
 
         sendResponse(res, {
             statusCode: StatusCodes.OK,
             success: true,
-            message: "Category data fetched!",
+            message: "Newsletter data fetched!",
             meta: result.meta,
             data: result.data,
         });
@@ -40,11 +40,11 @@ const getAll: RequestHandler = catchAsync(
 const getOne = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await CategoryService.getOne(id);
+    const result = await NewsletterService.getOne(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data fetched by id!",
+        message: "Newsletter data fetched by id!",
         data: result,
     });
 });
@@ -52,11 +52,11 @@ const getOne = catchAsync(async (req: Request, res: Response) => {
 const update = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await CategoryService.update(id, req.files, req.body);
+    const result = await NewsletterService.update(id, req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data updated!",
+        message: "Newsletter data updated!",
         data: result,
     });
 });
@@ -64,16 +64,16 @@ const update = catchAsync(async (req: Request, res: Response) => {
 const remove = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await CategoryService.remove(id);
+    const result = await NewsletterService.remove(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data deleted!",
+        message: "Newsletter data deleted!",
         data: result,
     });
 });
 
-export const CategoryController = {
+export const NewsletterController = {
     create,
     getAll,
     getOne,

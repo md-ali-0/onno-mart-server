@@ -7,6 +7,9 @@ import { ProductController } from "./product.controller";
 const router = Router();
 
 router.get("/", ProductController.getAll);
+router.get("/top-rated", ProductController.getTopRatedProducts);
+router.get("/best-selling", ProductController.getBestSellingProducts);
+router.get("/flash-sale", ProductController.getFlashSaleProducts);
 router.get("/sellers-product", ProductController.getAll);
 router.get("/:slug", ProductController.getOne);
 router.post(

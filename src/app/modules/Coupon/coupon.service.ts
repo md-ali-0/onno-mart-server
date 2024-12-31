@@ -1,13 +1,11 @@
-import { Category, Prisma } from "@prisma/client";
+import { Coupon, Prisma } from "@prisma/client";
 import { paginationHelper } from "../../../helpars/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
-const create = async (files: any, payload: any) => {
-    const image = files?.image?.[0]?.path || "";
-
-    const result = await prisma.category.create({
-        data: { ...payload, image },
+const create = async (payload: any) => {
+    const result = await prisma.coupon.create({
+        data: payload,
     });
 
     return result;
@@ -20,16 +18,11 @@ const getAll = async (
     const { page, limit, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, ...filterData } = params;
 
-    const andCondions: Prisma.CategoryWhereInput[] = [];
+    const andCondions: Prisma.CouponWhereInput[] = [];
 
-    andCondions.push({
-        isDeleted: false,
-    });
-
-    //console.log(filterData);
     if (params.searchTerm) {
         andCondions.push({
-            OR: ["name", "slug"].map((field) => ({
+            OR: ["code"].map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
                     mode: "insensitive",
@@ -48,10 +41,9 @@ const getAll = async (
         });
     }
 
-    //console.dir(andCondions, { depth: 'inifinity' })
-    const whereConditons: Prisma.CategoryWhereInput = { AND: andCondions };
+    const whereConditons: Prisma.CouponWhereInput = { AND: andCondions };
 
-    const result = await prisma.category.findMany({
+    const result = await prisma.coupon.findMany({
         where: whereConditons,
         skip,
         take: limit,
@@ -65,7 +57,7 @@ const getAll = async (
                   },
     });
 
-    const total = await prisma.category.count({
+    const total = await prisma.coupon.count({
         where: whereConditons,
     });
 
@@ -82,8 +74,8 @@ const getAll = async (
     };
 };
 
-const getOne = async (id: string): Promise<Category | null> => {
-    const result = await prisma.category.findUnique({
+const getOne = async (id: string): Promise<Coupon | null> => {
+    const result = await prisma.coupon.findUnique({
         where: {
             id,
         },
@@ -92,21 +84,14 @@ const getOne = async (id: string): Promise<Category | null> => {
     return result;
 };
 
-const update = async (
-    id: string,
-    files: any,
-    data: Partial<Category>
-): Promise<Category> => {
-    await prisma.category.findUniqueOrThrow({
+const update = async (id: string, data: Partial<Coupon>): Promise<Coupon> => {
+    await prisma.coupon.findUniqueOrThrow({
         where: {
             id,
         },
     });
-    const image = files?.image?.[0]?.path || "";
-    if (image) {
-        data.image = image;
-    }
-    const result = await prisma.category.update({
+
+    const result = await prisma.coupon.update({
         where: {
             id,
         },
@@ -116,26 +101,26 @@ const update = async (
     return result;
 };
 
-const remove = async (id: string): Promise<Category | null> => {
-    await prisma.category.findUniqueOrThrow({
+const remove = async (id: string): Promise<Coupon | null> => {
+    await prisma.coupon.findUniqueOrThrow({
         where: {
             id,
         },
     });
 
-    const result = await prisma.category.update({
+    const result = await prisma.coupon.update({
         where: {
             id,
         },
         data: {
-            isDeleted: true,
+            isActive: false,
         },
     });
 
     return result;
 };
 
-export const CategoryService = {
+export const CouponService = {
     create,
     getAll,
     getOne,

@@ -4,33 +4,33 @@ import sendResponse from "../../../shared/sendResponse";
 
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../../shared/catchAsync";
-import { CategoryService } from "./category.service";
+import { CouponService } from "./coupon.service";
 
 const create = catchAsync(async (req: Request, res: Response) => {
-    const result = await CategoryService.create(req.files, req.body);
+    const result = await CouponService.create(req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data Created!",
+        message: "Coupon data Created!",
         data: result,
     });
 });
 
 const getAll: RequestHandler = catchAsync(
     async (req: Request, res: Response) => {
-        const filters = pick(req.query,  ['name', 'searchTerm']);
+        const filters = pick(req.query,  ['code', 'searchTerm']);
         const options = pick(req.query, [
             "limit",
             "page",
             "sortBy",
             "sortOrder",
         ]);
-        const result = await CategoryService.getAll(filters, options);
+        const result = await CouponService.getAll(filters, options);
 
         sendResponse(res, {
             statusCode: StatusCodes.OK,
             success: true,
-            message: "Category data fetched!",
+            message: "Coupon data fetched!",
             meta: result.meta,
             data: result.data,
         });
@@ -40,11 +40,11 @@ const getAll: RequestHandler = catchAsync(
 const getOne = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await CategoryService.getOne(id);
+    const result = await CouponService.getOne(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data fetched by id!",
+        message: "Coupon data fetched by id!",
         data: result,
     });
 });
@@ -52,11 +52,11 @@ const getOne = catchAsync(async (req: Request, res: Response) => {
 const update = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await CategoryService.update(id, req.files, req.body);
+    const result = await CouponService.update(id, req.body);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data updated!",
+        message: "Coupon data updated!",
         data: result,
     });
 });
@@ -64,16 +64,16 @@ const update = catchAsync(async (req: Request, res: Response) => {
 const remove = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const result = await CategoryService.remove(id);
+    const result = await CouponService.remove(id);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Category data deleted!",
+        message: "Coupon data deleted!",
         data: result,
     });
 });
 
-export const CategoryController = {
+export const CouponController = {
     create,
     getAll,
     getOne,

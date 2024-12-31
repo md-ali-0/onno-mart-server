@@ -58,6 +58,93 @@ const getAll: RequestHandler = catchAsync(
     }
 );
 
+const getFlashSaleProducts: RequestHandler = catchAsync(
+    async (req: Request, res: Response) => {
+        const filters = pick(req.query, [
+            "name",
+            "brandId",
+            "categoryId",
+            "shopId",
+            "minPrice",
+            "maxPrice",
+            "searchTerm"
+        ]);
+        const options = pick(req.query, [
+            "limit",
+            "page",
+            "sortBy",
+            "sortOrder",
+        ]);
+        const result = await ProductService.getFlashSaleProducts(filters, options);
+
+        sendResponse(res, {
+            statusCode: StatusCodes.OK,
+            success: true,
+            message: "Product data fetched!",
+            meta: result.meta,
+            data: result.data,
+        });
+    }
+);
+
+const getBestSellingProducts: RequestHandler = catchAsync(
+    async (req: Request, res: Response) => {
+        const filters = pick(req.query, [
+            "name",
+            "brandId",
+            "categoryId",
+            "shopId",
+            "minPrice",
+            "maxPrice",
+            "searchTerm"
+        ]);
+        const options = pick(req.query, [
+            "limit",
+            "page",
+            "sortBy",
+            "sortOrder",
+        ]);
+        const result = await ProductService.getBestSellingProducts(filters, options);
+
+        sendResponse(res, {
+            statusCode: StatusCodes.OK,
+            success: true,
+            message: "Product data fetched!",
+            meta: result.meta,
+            data: result.data,
+        });
+    }
+);
+
+const getTopRatedProducts: RequestHandler = catchAsync(
+    async (req: Request, res: Response) => {
+        const filters = pick(req.query, [
+            "name",
+            "brandId",
+            "categoryId",
+            "shopId",
+            "minPrice",
+            "maxPrice",
+            "searchTerm"
+        ]);
+        const options = pick(req.query, [
+            "limit",
+            "page",
+            "sortBy",
+            "sortOrder",
+        ]);
+        const result = await ProductService.getTopRatedProducts(filters, options);
+
+        sendResponse(res, {
+            statusCode: StatusCodes.OK,
+            success: true,
+            message: "Product data fetched!",
+            meta: result.meta,
+            data: result.data,
+        });
+    }
+);
+
 const getOne = catchAsync(async (req: Request, res: Response) => {
     const { slug } = req.params;
 
@@ -98,6 +185,9 @@ export const ProductController = {
     create,
     duplicate,
     getAll,
+    getFlashSaleProducts,
+    getBestSellingProducts,
+    getTopRatedProducts,
     getOne,
     update,
     remove,
