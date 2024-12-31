@@ -4,6 +4,8 @@ import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
 const create = async (payload: any) => {
+    console.log(payload);
+    
     const result = await prisma.newsletter.create({
         data: payload,
     });
@@ -111,12 +113,9 @@ const remove = async (id: string): Promise<Newsletter | null> => {
         },
     });
 
-    const result = await prisma.newsletter.update({
+    const result = await prisma.newsletter.delete({
         where: {
             id,
-        },
-        data: {
-            isDeleted: true,
         },
     });
 

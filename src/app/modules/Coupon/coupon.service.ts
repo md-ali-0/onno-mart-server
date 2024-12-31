@@ -4,6 +4,7 @@ import prisma from "../../../shared/prisma";
 import { IPaginationOptions } from "../../interfaces/pagination";
 
 const create = async (payload: any) => {
+
     const result = await prisma.coupon.create({
         data: payload,
     });
