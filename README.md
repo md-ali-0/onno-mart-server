@@ -1,148 +1,107 @@
-# OnnoMart - E-Commerce Application
+# OnnoMart API
 
-## Project Name & Description
-The **OnnoMart - E-Commerce Application** is a complete online shopping platform designed to cater to users, vendors, and administrators. It provides an intuitive, secure, and responsive experience for all roles. Users can browse and purchase products, vendors can manage shops and inventories, and administrators can monitor and control the entire system. The application is built with modern web technologies and ensures scalability and high performance.
+Backend for **OnnoMart**, a multi-vendor e-commerce platform. One API serves three
+roles — shoppers, vendors and the platform admin — with JWT auth, Prisma over
+PostgreSQL, Cloudinary uploads and SSLCommerz / Aamarpay checkout.
 
----
-
-## Live URLs
--   **Frontend Deployment**: [Frontend Live URL](https://onno-mart.vercel.app)
--   **Backend Deployment**: [Backend Live URL](https://onnomart-api.vercel.app)
-
----
-
-## Technology Stack & Packages
-
-### Backend:
-
--   **Framework**: Node.js with Express.js
--   **Database**: PostgreSQL (managed using Prisma)
--   **Authentication**: JSON Web Tokens (JWT)
--   **Image Uploads**: Integrated with Cloudinary
--   **Payment Gateways**: SSLCommerz and Aamarpay
-
-### Frontend:
-
--   **Framework**: React.js or Next.js
--   **State Management**: Redux
--   **CSS**: TailwindCSS for styling
-
-### Other Packages:
-
--   **bcrypt**: For password hashing
--   **jsonwebtoken**: For handling authentication
--   **multer**: For file uploads
--   **pg**: PostgreSQL client for Node.js
--   **redux**: For handeling state and rtk query making HTTP requests
+- **Live API**: https://onnomart-api-ali-x.vercel.app
+- **Frontend repo**: https://github.com/md-ali-0/onno-mart-client
+- **Database**: Neon PostgreSQL (Singapore region)
 
 ---
 
-## Features & Functionalities
+## Stack
 
--   User Features:
-    -   Browse products with advanced filtering and sorting options.
-    -   Add items to the cart and checkout with secure payment options.
-    -   View order history and leave reviews for purchased products.
-    -   Compare up to three products from the same category.
--   Vendor Features:
-    -   Manage shops and products (add, edit, or delete).
-    -   View and respond to customer reviews.
-    -   Track order history for better inventory management.
--   Admin Features:
-    -   Manage users, vendors, and product categories.
-    -   Monitor transactions and platform activities.
--   Other Features:
-    -   Follow specific shops for personalized product prioritization.
-    -   Recent products page to view recently browsed items.
-    -   Responsive design for an optimized experience across devices.
+| Layer | Choice |
+| --- | --- |
+| Runtime | Node.js + Express, TypeScript |
+| Database | PostgreSQL via Prisma 6 (16 migrations) |
+| Auth | JWT access + refresh tokens, bcrypt hashing |
+| Uploads | Cloudinary with multer |
+| Payments | SSLCommerz, Aamarpay |
+| Mail | Nodemailer over Gmail SMTP |
+| Hosting | Vercel serverless functions (region iad1) |
 
-### General Features:
+## Modules
 
--   Mobile and desktop responsive design.
--   Paginated APIs for list-based data (products, order history, etc.).
--   Cart functionality allowing products only from one vendor at a time.
--   Flash sale and related product views.
+Each module under `src/app/modules/*` is a controller / service / route / validation
+quartet:
+
+`Auth` · `User` · `Product` · `Category` · `Brand` · `Shop` · `Order` · `Payment` ·
+`Review` · `Coupon` · `Newsletter` · `Dashboard`
+
+Routes are mounted under `/api`, so `GET /api/product?page=1&limit=12` and
+`GET /api/statistics` are real endpoints. List endpoints return
+`{ success, message, meta, data }` with pagination metadata.
 
 ---
 
+## Local setup
 
-## Setup Instructions
+```bash
+git clone https://github.com/md-ali-0/onno-mart-server.git
+cd onno-mart-server
+pnpm install                 # runs prisma generate via postinstall
 
-### Prerequisites
+cp .env.example .env         # then fill in the values
+pnpm exec prisma migrate dev # apply migrations
+pnpm run seed                # optional: demo catalogue
+pnpm run dev                 # http://localhost:5000
+```
 
--   Node.js and npm installed
--   PostgreSQL database running
+`pnpm run seed` wipes and reloads the demo data: 24 products, 6 categories,
+10 brands, 3 shops, 3 orders, 5 reviews and 3 coupons. Every seeded account uses
+the password `OnnoMart@123`.
 
-### Backend Setup:
+| Role | Email |
+| --- | --- |
+| Admin | `admin@onnomart.dev` |
+| Vendor (Dhaka Gadget House) | `gadget@onnomart.dev` |
+| Vendor (Rongdhonu Fashion) | `fashion@onnomart.dev` |
+| Vendor (Shobuj Bazar) | `living@onnomart.dev` |
+| Customer | `customer@onnomart.dev` |
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/md-ali-0/onno-mart-server.git
-    ```
-2. Navigate to the backend directory:
-    ```bash
-    cd backend
-    ```
-3. Install dependencies:
-    ```bash
-    npm install
-    ```
-4. Create a `.env` file in the root of the backend directory and add the following:
-   `env
-   NODE_ENV="development"
-   PORT=3000
-   DATABASE_URL="postgresql://DB_USER:DB_PASS@localhost:5432/DB_NAME?schema=public"
-   JWT_SECRET="YOUR SECRET"
-   EXPIRES_IN="30d"
-   REFRESH_TOKEN_SECRET="YOUR SECRET"
-   REFRESH_TOKEN_EXPIRES_IN="30d"
-   RESET_PASS_TOKEN="YOUR TOKEN SECRET"
-   RESET_PASS_TOKEN_EXPIRES_IN="5m"
-   RESET_PASS_LINK="FRONT-END RESET PASSWORD FORM LINK"
-   EMAIL = "YOUR EMAIL"
-   APP_PASS = "YOUR APP PASSWORD"
-   STORE_ID = "SSL STORE ID"
-   STORE_PASS = "SSL STORE PASSWORD"
-   SUCCESS_URL = "http://localhost:3030/success"
-   CANCEL_URL = "http://localhost:3030/cancel"
-   FAIL_URL = "http://localhost:3030/fail"
-   SSL_PAYMENT_API = "PAYMENT API"
-   SSL_VALIDATIOIN_API = "PAYMENT VALIDATION API"
-    `
-5. Run database migrations:
-    ```bash
-    npx prisma migrate dev
-    ```
-6. Start the backend server:
-    ```bash
-    npm start
-    ```
+Also available: `pnpm run build` (prisma generate + tsc), `pnpm run typecheck`,
+`pnpm run migrate` (production migrations).
+
+## Environment
+
+`.env.example` lists every variable the code reads. The ones that matter:
+
+- `DATABASE_URL` — on Vercel use the **pooled** Neon connection string; use the
+  direct one for migrations, because migrations hold advisory locks.
+- `JWT_SECRET`, `REFRESH_TOKEN_SECRET`, `RESET_PASS_TOKEN` — separate values.
+- `CLIENT_URL` — the browser origin allowed by CORS.
+- `EMAIL` + `APP_PASS` — Gmail address and app password for password-reset mail.
+- `CLOUDINARY_*` — needed for product and shop image uploads.
+- `STORE_ID`, `STORE_PASS`, `AMARPAY_*` — payment gateway credentials
+  (sandbox URLs are already in `.env.example`).
+
+## Deploying to Vercel
+
+The API runs as a single serverless function:
+
+- `api/index.ts` exports the Express app. `src/server.ts` is only for local dev —
+  it calls `app.listen`, which a serverless platform never invokes.
+- `vercel.json` rewrites every path to `/api`.
+- `prisma/schema.prisma` generates the client for both the local and the
+  `rhel-openssl-3.0.x` (Vercel) runtime.
+- `postinstall` runs `prisma generate`, so the client always matches the schema.
+- `pnpm-workspace.yaml` allows the `prisma`, `bcrypt` and `esbuild` build scripts,
+  otherwise pnpm skips them and the deploy fails at runtime.
+
+Set the environment variables in the Vercel project, then either push to `main`
+or deploy manually. Cold-start SQL goes through the pooled connection string.
+
+## Known gaps
+
+- Payment callbacks need real SSLCommerz / Aamarpay credentials plus public
+  `SUCCESS_URL` / `CANCEL_URL` / `FAIL_URL` values; the sandbox URLs are wired up,
+  the store credentials are not.
+- Password reset mail needs a Gmail app password; without it the endpoint fails.
+- Uploads need Cloudinary credentials; the seeded catalogue uses plain image URLs
+  so browsing and checkout work without them.
 
 ---
 
-## Key Features & Functionality
-
--   Comprehensive admin dashboard with user and product management capabilities.
--   Vendor dashboard for shop and product management.
--   Advanced cart functionality with vendor-specific restrictions.
--   Integrated payment gateways (SSLCommerz and Aamarpay).
--   Paginated APIs for efficient data handling.
--   Responsive design for both mobile and desktop platforms.
-
----
-
-### Admin:
-- Email: admin@gmail.com
-- Password: 123456
-
-### Vendor:
-- Email: vendor1@gmail.com
-- Password: 123456
-
-### Customer:
-- Email: ali@gmail.com
-- Password: 123456
-
-
-## Contact
-For queries or support, reach out via [Mohammad Ali](mailto:md.ali.office@gmail.com). or the project repository.
+Built by [Mohammad Ali](https://github.com/md-ali-0).
