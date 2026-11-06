@@ -4,8 +4,8 @@ Backend for **OnnoMart**, a multi-vendor e-commerce platform. One API serves thr
 roles — shoppers, vendors and the platform admin — with JWT auth, Prisma over
 PostgreSQL, Cloudinary uploads and SSLCommerz / Aamarpay checkout.
 
-- **Live API**: https://onnomart-api-ali-x.vercel.app
-- **Frontend repo**: https://github.com/md-ali-0/onno-mart-client
+- **Live API**: https://onnomart-api.vercel.app
+- **Frontend**: https://onno-mart.vercel.app
 - **Database**: Neon PostgreSQL (Singapore region)
 
 ---
