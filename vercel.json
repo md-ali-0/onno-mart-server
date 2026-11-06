@@ -1,15 +1,11 @@
 {
     "version": 2,
-    "builds": [
+    "buildCommand": "pnpm run build",
+    "installCommand": "pnpm install",
+    "rewrites": [
         {
-            "src": "/dist/server.js",
-            "use": "@vercel/node"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/dist/server.js"
+            "source": "/(.*)",
+            "destination": "/api"
         }
     ]
 }
