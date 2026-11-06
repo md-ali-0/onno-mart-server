@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {
     CouponType,
     OrderStatus,
@@ -7,10 +8,10 @@ import {
     UserStatus,
 } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { categoryImage, productImage, wordmark } from './catalogue-images';
 
 const prisma = new PrismaClient();
 
-const image = (seed: string) => `https://picsum.photos/seed/${seed}/900/900`;
 const DEMO_PASSWORD = 'OnnoMart@123';
 
 const categories = [
@@ -437,7 +438,7 @@ async function main() {
         const shop = await prisma.shop.create({
             data: {
                 name: vendor.shopName,
-                logoUrl: image(`shop-${vendor.key}`),
+                logoUrl: wordmark(vendor.shopName),
                 description: vendor.description,
                 status: ShopStatus.ACTIVE,
                 vendor: {
@@ -455,7 +456,7 @@ async function main() {
     const categoryBySlug: Record<string, string> = {};
     for (const category of categories) {
         const created = await prisma.category.create({
-            data: { ...category, image: image(`cat-${category.slug}`) },
+            data: { ...category, image: categoryImage(category.slug) },
         });
         categoryBySlug[category.slug] = created.slug;
     }
@@ -463,7 +464,7 @@ async function main() {
     const brandBySlug: Record<string, string> = {};
     for (const brand of brands) {
         const created = await prisma.brand.create({
-            data: { ...brand, image: image(`brand-${brand.slug}`) },
+            data: { ...brand, image: wordmark(brand.name) },
         });
         brandBySlug[brand.slug] = created.slug;
     }
@@ -481,15 +482,15 @@ async function main() {
                 discount: product.discount,
                 inventory: product.inventory,
                 description: product.description,
-                thumbnail: image(product.slug),
+                thumbnail: productImage(product.slug),
                 categoryId: categoryBySlug[product.categorySlug],
                 brandId: brandBySlug[product.brandSlug],
                 shopId,
                 images: {
                     create: [
-                        { url: image(`${product.slug}-1`) },
-                        { url: image(`${product.slug}-2`) },
-                        { url: image(`${product.slug}-3`) },
+                        { url: productImage(product.slug, 1) },
+                        { url: productImage(product.slug, 2) },
+                        { url: productImage(product.slug, 3) },
                     ],
                 },
             },

@@ -11,7 +11,8 @@
         "typecheck": "tsc --noEmit",
         "seed": "tsx prisma/seed.ts",
         "migrate": "prisma migrate deploy",
-        "postinstall": "prisma generate"
+        "postinstall": "prisma generate",
+        "images:update": "tsx prisma/update-catalogue-images.ts"
     },
     "prisma": {
         "seed": "tsx prisma/seed.ts"
