@@ -119,9 +119,10 @@ model Category {
 
 model Order {
   id            String      @id @default(cuid())
-  userId        String
+  // Nullable so guests can check out without an account.
+  userId        String?
   tranId        String      @unique
-  user          User        @relation(fields: [userId], references: [id])
+  user          User?       @relation(fields: [userId], references: [id])
   shopId        String
   shop          Shop        @relation(fields: [shopId], references: [id])
   products      OrderItem[]

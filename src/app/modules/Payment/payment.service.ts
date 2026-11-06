@@ -6,7 +6,7 @@ import { PaymentIntent } from "./payment.intent";
 
 const create = async (paymentMethod: string, payload: any) => {
     const { userId, shopId, products, customer, totalAmount } = payload;
-    const tran_id = `${userId}_${Date.now()}`;
+    const tran_id = `${userId ?? "guest"}_${Date.now()}`;
     const currency = "BDT"
 
     if (paymentMethod !== "SSLCommerz" && paymentMethod !== "AmarPay") {
@@ -42,7 +42,7 @@ const create = async (paymentMethod: string, payload: any) => {
 
             const order = await tx.order.create({
                 data: {
-                    userId,
+                    userId: userId ?? null,
                     tranId: tran_id,
                     shopId,
                     paymentMethod,
