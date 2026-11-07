@@ -50,6 +50,8 @@ model Vendor {
 model Shop {
   id          String     @id @default(cuid())
   name        String
+  // Public URL segment: /shop/<slug>. Optional so old rows can be backfilled.
+  slug        String?    @unique
   logoUrl     String?
   description String?
   vendorId    String     @unique

@@ -1,3 +1,4 @@
+import { uniqueShopSlug } from "../../../helpars/slug";
 import { Role, ShopStatus, UserStatus } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { StatusCodes } from "http-status-codes";
@@ -111,6 +112,7 @@ const vendorSignup = async (files: any, payload: any) => {
         const newShop = await tx.shop.create({
             data: {
                 name: shopName,
+                slug: await uniqueShopSlug(tx as never, shopName),
                 description: shopDescription,
                 logoUrl,
                 vendorId: newVendor.id,

@@ -74,10 +74,12 @@ const getAll = async (
     };
 };
 
-const getOne = async (id: string): Promise<Shop | null> => {
-    const result = await prisma.shop.findUnique({
+const getOne = async (idOrSlug: string): Promise<Shop | null> => {
+    // Accepts either the cuid or the public slug so old /shop/<id> links keep
+    // working while the storefront links by slug.
+    const result = await prisma.shop.findFirst({
         where: {
-            id,
+            OR: [{ id: idOrSlug }, { slug: idOrSlug }],
         },
         include: {
             vendor: true,
