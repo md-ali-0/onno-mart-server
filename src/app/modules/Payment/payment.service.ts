@@ -5,7 +5,10 @@ import ApiError from "../../errors/ApiError";
 import { PaymentIntent } from "./payment.intent";
 
 const create = async (paymentMethod: string, payload: any) => {
-    const { userId, shopId, products, customer, totalAmount } = payload;
+    // The storefront posts { orderData: {...}, paymentMethod }; accept a flat
+    // body too so scripts and older clients keep working.
+    const { userId, shopId, products, customer, totalAmount } =
+        payload?.orderData ?? payload ?? {};
     const tran_id = `${userId ?? "guest"}_${Date.now()}`;
     const currency = "BDT"
 
@@ -73,7 +76,13 @@ const create = async (paymentMethod: string, payload: any) => {
 
         return GatewayPageURL
     } catch (error) {
-        console.log("error:", error);
+        console.error("payment intent failed:", error);
+        throw error instanceof ApiError
+            ? error
+            : new ApiError(
+                  StatusCodes.INTERNAL_SERVER_ERROR,
+                  "Could not start the payment"
+              );
     }
 };
 
