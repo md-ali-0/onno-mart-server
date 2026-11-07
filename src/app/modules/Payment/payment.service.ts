@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import config from "../../../config";
 
 import prisma from "../../../shared/prisma";
 import ApiError from "../../errors/ApiError";
@@ -13,8 +14,26 @@ const create = async (paymentMethod: string, payload: any) => {
     const currency = "BDT"
 
     if (paymentMethod !== "SSLCommerz" && paymentMethod !== "AmarPay") {
-        
-        throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Invalid Payment Method Selected")
+        throw new ApiError(
+            StatusCodes.NOT_ACCEPTABLE,
+            "Invalid Payment Method Selected"
+        );
+    }
+
+    // Fail loudly when a deployment is missing gateway credentials. Without this
+    // the gateway library returns nothing and the client sees a generic 400.
+    if (paymentMethod === "SSLCommerz" && (!config.ssl.storeId || !config.ssl.storePass)) {
+        throw new ApiError(
+            StatusCodes.SERVICE_UNAVAILABLE,
+            "Payment is not configured on this deployment: STORE_ID and STORE_PASS are missing."
+        );
+    }
+
+    if (paymentMethod === "AmarPay" && (!config.AmarPay.store_id || !config.AmarPay.signature_key)) {
+        throw new ApiError(
+            StatusCodes.SERVICE_UNAVAILABLE,
+            "Payment is not configured on this deployment: AMARPAY_STORE_ID and AMARPAY_SIGNATURE_KEY are missing."
+        );
     }
 
     try {

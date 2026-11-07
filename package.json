@@ -12,7 +12,8 @@
         "seed": "tsx prisma/seed.ts",
         "migrate": "prisma migrate deploy",
         "postinstall": "prisma generate",
-        "images:update": "tsx prisma/update-catalogue-images.ts"
+        "images:update": "tsx prisma/update-catalogue-images.ts",
+        "env:vercel": "node scripts/push-vercel-env.mjs"
     },
     "prisma": {
         "seed": "tsx prisma/seed.ts"
